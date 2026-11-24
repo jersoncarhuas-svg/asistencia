@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control de Asistencia — Backus Log</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#0F63AC;--azul2:#0b4e89;--verde:#00A85A;--rojo:#EC3237;--bg:#f1f5fa;--card:#fff;--line:#dde6f0;--txt:#0f1a28;--mut:#5b6472}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+header{background:#fff;border-bottom:4px solid var(--azul);padding:12px 18px}
+.hd-top{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{background:#fff;display:flex;align-items:center}
+.hd-ti h1{margin:0;font-size:18px;font-weight:800;color:var(--azul)}
+.hd-ti p{margin:2px 0 0;font-size:13px;color:var(--mut)}
+
+
+.wrap{max-width:1000px;margin:0 auto;padding:14px}
+.controls{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:12px;color:var(--mut);font-weight:600}
+select,input[type=date],input[type=search]{padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;color:var(--txt);min-height:40px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.chip b{font-weight:700}
+.c-pre{color:#00A85A}.c-tar{color:#9a6a00}.c-fal{color:#EC3237}.c-per{color:#5b4bbf}.c-vac{color:#0c6ca8}
+.tbl{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:1fr 128px 108px 108px;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.row.head{background:#eaf1fb;font-size:12px;color:var(--mut);font-weight:700;border-top:none;position:sticky;top:0}
+.nm{font-weight:700;font-size:14px;line-height:1.25}
+.sub{font-size:12px;color:var(--mut)}
+.row select,.row input{width:100%;min-height:38px}
+.st-Presente{background:#e7f6ec}.st-Tardanza{background:#fdf3df}.st-Falta{background:#fde7e7}
+.st-Permiso{background:#efecfb}.st-Vacaciones{background:#e4f1fa}
+.bar{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 14px;display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;border-radius:0 0 12px 12px}
+button{border:none;border-radius:8px;padding:11px 16px;font-size:14px;font-weight:600;cursor:pointer}
+.btn{background:var(--azul);color:#fff}.btn:hover{background:var(--azul2)}
+.btn2{background:#fff;color:var(--txt);border:1px solid var(--line)}
+.saved{font-size:13px;color:var(--mut);align-self:center}
+.empty{padding:30px;text-align:center;color:var(--mut)}
+@media(max-width:620px){.row{grid-template-columns:1fr 96px;grid-template-areas:"nm nm" "est est" "ent sal"}.col-nm{grid-area:nm}.col-est{grid-area:est}.col-ent{grid-area:ent}.col-sal{grid-area:sal}.row.head{display:none}.row input,.row select{min-height:42px}}
+.lock{position:fixed;inset:0;background:#0F63AC;display:flex;align-items:center;justify-content:center;z-index:50}
+.lock .box{background:#fff;border-radius:16px;padding:28px 26px;width:300px;max-width:90vw;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.lock h2{margin:8px 0 2px;color:#0F63AC;font-size:20px}
+.lock p{margin:0 0 16px;color:#5b6472;font-size:13px}
+.lock input{width:100%;padding:11px;border:1px solid #dde6f0;border-radius:8px;font-size:15px;text-align:center;margin-bottom:10px}
+.lock button{width:100%;background:#0F63AC;color:#fff;border:none;border-radius:8px;padding:11px;font-size:15px;font-weight:700;cursor:pointer}
+.lock .err{color:#EC3237;font-size:13px;min-height:18px}
+</style>
+</head>
+<body>
+<div class="lock" id="lock"><div class="box"><svg viewBox="0 0 300 92" width="120" height="37" aria-label="Lavoro"><rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/><rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/><text x="0" y="70" font-family="Nunito,Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text></svg><h2>Control de Asistencia</h2><p>Ingresa la clave de supervisor</p><input type="password" id="pwd" placeholder="Clave" autocomplete="off"><div class="err" id="err"></div><button id="entrar">Entrar</button></div></div>
+<header>
+  <div class="hd-top">
+    <div class="logo"><svg viewBox="0 0 300 92" width="150" height="46" role="img" aria-label="Lavoro" xmlns="http://www.w3.org/2000/svg">
+  <rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/>
+  <rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/>
+  <text x="0" y="70" font-family="'Nunito','Baloo 2',Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text>
+</svg></div>
+    <div class="hd-ti"><h1>Control de Asistencia</h1><p>Backus Log — Oriente y Sur</p></div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <div class="fld"><label>Centro de distribución</label><select id="cd"></select></div>
+    <div class="fld"><label>Fecha</label><input type="date" id="fecha"></div>
+    <div class="fld" style="flex:1;min-width:160px"><label>Buscar persona</label><input type="search" id="buscar" placeholder="Nombre o DNI…"></div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="tbl" id="tbl"></div>
+  <div class="bar">
+    <button class="btn" id="guardar">Guardar día</button>
+    <button class="btn2" id="todosP">Marcar todos Presente</button>
+    <button class="btn2" id="csv">Descargar Excel</button>
+    <span class="saved" id="saved"></span>
+  </div>
+</div>
+<script>
+const PERSONAL = [{"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "45333960", "nom": "Anglas Aliaga Michael", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "47864984", "nom": "Arana Casas Jhack Mishell", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75460404", "nom": "Bonilla Huaman Alexander", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "44009052", "nom": "Bravo Macha Juan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "73787602", "nom": "Dominguez Vallejos Maria Jesùs", "cargo": "Asistente Administrativo"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75082129", "nom": "Malma Gambarini Jorge Luis", "cargo": "Auxiliar Mkp"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "72373698", "nom": "Aguilar Vasquez Fermi Moises", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "22433510", "nom": "Calderon Venancio Eduardo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "42662751", "nom": "Moscoso Valerio Digno Junior", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "77031180", "nom": "Pablo Camones Augusto", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "41717022", "nom": "Ramos Acuña Jose Manuel", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "75490845", "nom": "Rivera Trujillo Abel Aldair", "cargo": "Estibador"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "73095789", "nom": "Aquituari Ahuanari Huanrri", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "44544537", "nom": "Chanchari Valles Oliver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "42967514", "nom": "Chanchari Valles Vidal", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71110155", "nom": "Charpentier Mayanchi Jean Pool", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "47295540", "nom": "Eriberto Segundo Oroche Tamani", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70368464", "nom": "Mayanchi  Alvarado Jhonatan", "cargo": "Operario Inventario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "62598772", "nom": "Montalvan Zambrano Pool Zidane", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70841830", "nom": "Pinchi Cahuaza Andy Adrian", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "74046690", "nom": "Sangama Chanchari Marcelo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "5414399", "nom": "Sangama Noa Marcial", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71142813", "nom": "Suarez Navarro Carlos Antonio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "48175156", "nom": "Zambrano  Balceca  Royer Mayer", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "60326927", "nom": "Delgado Ruiz Jabes Orbin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75019464", "nom": "Farceque Tarrillo Gersin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47412657", "nom": "Isuiza Saavedra Macbride", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47526885", "nom": "Mayan Pizango Gonzalo Carter", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "46593287", "nom": "Valles Pizango Fernando", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75940272", "nom": "Vela Vasquez Jean Pear", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "61342505", "nom": "Oseda  Bardales Luis Miguel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71957337", "nom": "Rubina Davila Jose Jhordan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71784696", "nom": "Vargas Torres Walter Luis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "80313948", "nom": "Amasifuen Paredes Jenner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "45585249", "nom": "Cachique Sangama  Abner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73034921", "nom": "Chavez Tenazoa Natalia", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "47070152", "nom": "Isuiza Tenazoa Fiorella", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75243631", "nom": "Lozano Flores Jhon Alexis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73384354", "nom": "Paima Tenazoa Tony", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "1162606", "nom": "Pezo Ramirez Aldo", "cargo": "Asistente De Inventario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "70653334", "nom": "Ramos Roman Angel Heriberto", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75192135", "nom": "Sanchez Jimenez Deibi", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "954925", "nom": "Tenazoa Ramirez Crower", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47014661", "nom": "Huansi Huanio Reinerio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "77924633", "nom": "Olortegui Faustino Drinder Neyver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47262396", "nom": "Rojas Licla Juan Abel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75453612", "nom": "Huaya Ortiz Ronaldo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75494285", "nom": "Lozano Zumaeta Jhon Gonzalo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "60767190", "nom": "Salas Pizango Christofer", "cargo": "Operario"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "43558789", "nom": "Chavez Blanco Jesus", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "40504777", "nom": "Huaman Quispe Mario", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "80071575", "nom": "Pauccar Cusicuna Sebastian", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Ilo", "dni": "74777691", "nom": "Rodriguez Soto Gianfranco", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4749466", "nom": "Usandivares Cristhian Alberto", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4423556", "nom": "Valencia Salas Justo Benigno", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "73252356", "nom": "Vargas Gamero Sergio Adonae", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "71621902", "nom": "Carrillo Quispe Fernando Florentino", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "48700498", "nom": "Orosco Huamanccari Alexander", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "74575516", "nom": "Quenaya Quenta Jose Anthony Wildor", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "45366841", "nom": "Vizcarra Butron Jose Williams", "cargo": "Operario"}];
+const ESTADOS = ["", "Presente","Tardanza","Falta","Permiso","Vacaciones"];
+const $ = s=>document.querySelector(s);
+const cdSel=$("#cd"), fecha=$("#fecha"), buscar=$("#buscar");
+
+// poblar CDs agrupados por zona
+const grupos={};
+PERSONAL.forEach(p=>{(grupos[p.zona]=grupos[p.zona]||new Set()).add(p.cd)});
+Object.keys(grupos).sort().forEach(z=>{
+  const og=document.createElement("optgroup"); og.label="Zona "+z;
+  [...grupos[z]].sort().forEach(cd=>{const o=document.createElement("option");o.value=cd;o.textContent=cd;og.appendChild(o)});
+  cdSel.appendChild(og);
+});
+fecha.value=new Date().toLocaleDateString("en-CA",{timeZone:"America/Lima"});
+
+function clave(){return "asist_"+cdSel.value+"_"+fecha.value}
+function cargar(){try{return JSON.parse(localStorage.getItem(clave())||"{}")}catch(e){return {}}}
+function guardarAuto(reg){localStorage.setItem(clave(), JSON.stringify(reg))}
+
+let reg={};
+function render(){
+  reg=cargar();
+  const q=buscar.value.trim().toLowerCase();
+  const lista=PERSONAL.filter(p=>p.cd===cdSel.value && (!q || p.nom.toLowerCase().includes(q)||p.dni.includes(q)));
+  const tbl=$("#tbl"); tbl.innerHTML="";
+  if(!lista.length){tbl.innerHTML='<div class="empty">No hay personal para mostrar.</div>';pintarChips();return}
+  const head=document.createElement("div");head.className="row head";
+  head.innerHTML='<div>Trabajador</div><div>Estado</div><div>Entrada</div><div>Salida</div>';tbl.appendChild(head);
+  lista.forEach(p=>{
+    const d=reg[p.dni]||{};
+    const row=document.createElement("div");row.className="row";
+    const opt=ESTADOS.map(e=>`<option value="${e}" ${d.estado===e?"selected":""}>${e||"— estado —"}</option>`).join("");
+    row.innerHTML=`
+      <div class="col-nm"><div class="nm">${p.nom}</div><div class="sub">${p.cargo} · DNI ${p.dni}</div></div>
+      <div class="col-est"><select class="st-${d.estado||''}" data-dni="${p.dni}" data-k="estado">${opt}</select></div>
+      <div class="col-ent"><input type="time" data-dni="${p.dni}" data-k="entrada" value="${d.entrada||''}"></div>
+      <div class="col-sal"><input type="time" data-dni="${p.dni}" data-k="salida" value="${d.salida||''}"></div>`;
+    tbl.appendChild(row);
+  });
+  tbl.querySelectorAll("select,input").forEach(el=>el.addEventListener("change",onChange));
+  pintarChips();
+}
+function onChange(e){
+  const dni=e.target.dataset.dni,k=e.target.dataset.k;
+  reg[dni]=reg[dni]||{}; reg[dni][k]=e.target.value;
+  if(k==="estado"){e.target.className="st-"+e.target.value}
+  guardarAuto(reg); pintarChips();
+  $("#saved").textContent="Guardado automáticamente ✓";
+}
+function pintarChips(){
+  const total=PERSONAL.filter(p=>p.cd===cdSel.value).length;
+  const c={Presente:0,Tardanza:0,Falta:0,Permiso:0,Vacaciones:0};
+  Object.values(reg).forEach(d=>{if(d.estado&&c[d.estado]!=null)c[d.estado]++});
+  const marcados=Object.values(c).reduce((a,b)=>a+b,0);
+  $("#chips").innerHTML=
+    `<span class="chip">Total <b>${total}</b></span>`+
+    `<span class="chip c-pre">Presentes <b>${c.Presente}</b></span>`+
+    `<span class="chip c-tar">Tardanzas <b>${c.Tardanza}</b></span>`+
+    `<span class="chip c-fal">Faltas <b>${c.Falta}</b></span>`+
+    `<span class="chip c-per">Permisos <b>${c.Permiso}</b></span>`+
+    `<span class="chip c-vac">Vacaciones <b>${c.Vacaciones}</b></span>`+
+    `<span class="chip">Sin marcar <b>${total-marcados}</b></span>`;
+}
+cdSel.onchange=render; fecha.onchange=render;
+buscar.oninput=render;
+$("#guardar").onclick=()=>{guardarAuto(reg);$("#saved").textContent="Día guardado ✓ ("+fecha.value+")"};
+$("#todosP").onclick=()=>{
+  PERSONAL.filter(p=>p.cd===cdSel.value).forEach(p=>{reg[p.dni]=reg[p.dni]||{};if(!reg[p.dni].estado)reg[p.dni].estado="Presente"});
+  guardarAuto(reg);render();$("#saved").textContent="Todos marcados Presente ✓";
+};
+$("#csv").onclick=()=>{
+  const lista=PERSONAL.filter(p=>p.cd===cdSel.value);
+  const filas=[["Fecha","Centro de costo","CD","DNI","Nombre","Cargo","Estado","Entrada","Salida"]];
+  lista.forEach(p=>{const d=reg[p.dni]||{};
+    filas.push([fecha.value,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.entrada||"",d.salida||""])});
+  const nombre="Asistencia_"+cdSel.value+"_"+fecha.value;
+  if(window.XLSX){
+    const ws=XLSX.utils.aoa_to_sheet(filas);
+    ws["!cols"]=[{wch:11},{wch:20},{wch:16},{wch:11},{wch:30},{wch:22},{wch:12},{wch:9},{wch:9}];
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Asistencia");
+    XLSX.writeFile(wb,nombre+".xlsx");
+  }else{
+    let csv="";filas.forEach(r=>{csv+=r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(",")+"\n"});
+    const b=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=nombre+".csv";a.click();
+  }
+};
+
+// ----- Clave de acceso -----
+const CLAVE_SUP="backus2026";
+const lock=document.getElementById("lock");
+function abrir(){lock.style.display="none";try{sessionStorage.setItem("okAsist","1")}catch(e){}}
+if(sessionStorage.getItem("okAsist")==="1"){abrir()}
+document.getElementById("entrar").onclick=()=>{if(document.getElementById("pwd").value===CLAVE_SUP){abrir()}else{document.getElementById("err").textContent="Clave incorrecta"}};
+document.getElementById("pwd").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("entrar").click()});
+render();
+</script>
+</body>
+</html>
