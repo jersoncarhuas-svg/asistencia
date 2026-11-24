@@ -16,6 +16,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
 :root{--azul:#0F63AC;--azul-d:#0b4e89;--azul-l:#e8f1fb;--verde:#00A85A;--rojo:#EC3237;
 --bg:#eef2f7;--card:#ffffff;--line:#e3e9f1;--txt:#101828;--mut:#687385;--radius:14px;
@@ -235,12 +237,21 @@ Object.keys(grupos).sort().forEach(z=>{
 });
 fecha.value=new Date().toLocaleDateString("en-CA",{timeZone:"America/Lima"});
 
+// ---- Firebase: nube compartida ----
+const firebaseConfig={apiKey:"AIzaSyDBDavzuMhHqflyxo5lW7xV2eJd8N97H-w",authDomain:"asistencia-backus.firebaseapp.com",databaseURL:"https://asistencia-backus-default-rtdb.firebaseio.com",projectId:"asistencia-backus",storageBucket:"asistencia-backus.firebasestorage.app",messagingSenderId:"132968950299",appId:"1:132968950299:web:b855c8623c3227219e66be"};
+let db=null, cloudData={}, dirty=false;
+try{firebase.initializeApp(firebaseConfig);db=firebase.database();
+  db.ref("asistencias").on("value",s=>{cloudData=s.val()||{};if(!dirty)render();});
+}catch(e){console.log("Firebase off:",e&&e.message);}
+function keyOf(cd,fe){return (cd+"_"+fe).replace(/[.#$\/\[\]]/g,"-")}
+
 function clave(){return "asist_"+cdSel.value+"_"+fecha.value}
-function cargar(){try{return JSON.parse(localStorage.getItem(clave())||"{}")}catch(e){return {}}}
+function cargar(){const k=keyOf(cdSel.value,fecha.value);if(cloudData[k]&&cloudData[k].data){return JSON.parse(JSON.stringify(cloudData[k].data))}try{return JSON.parse(localStorage.getItem(clave())||"{}")}catch(e){return {}}}
 function salvar(r){localStorage.setItem(clave(),JSON.stringify(r))}
 let reg={};
 
 function render(){
+  dirty=false;
   reg=cargar();
   if(localStorage.getItem("supName"))sup.value=localStorage.getItem("supName");
   const q=buscar.value.trim().toLowerCase();
@@ -287,7 +298,7 @@ function onChange(e){
     const card=e.target.closest(".emp");
     card.className="emp s-"+v;
   }
-  salvar(reg);chips();
+  dirty=true;salvar(reg);chips();
 }
 
 function conteo(){
@@ -372,19 +383,36 @@ function mostrarComprobante(cd,fe,zona,supv,dm){
 
 // ---- Guardar día + Historial ----
 const HKEY="hist_asist_v1";
-function histLoad(){try{return JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){return[]}}
-function histSave(a){localStorage.setItem(HKEY,JSON.stringify(a))}
+function histLoad(){
+  if(db){return Object.keys(cloudData||{}).map(k=>cloudData[k]).filter(e=>e&&e.cd&&e.fecha).sort((a,b)=>(b.fecha+(b.cd||"")).localeCompare(a.fecha+(a.cd||"")));}
+  try{return JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){return[]}
+}
 function guardarDia(){
   const lista=PERSONAL.filter(p=>p.cd===cdSel.value);
+  // Validar: todos deben tener estado; presentes/tardanzas deben tener horario
+  const faltan=[];
+  lista.forEach(p=>{const d=reg[p.dni]||{};
+    if(!d.estado){faltan.push("• "+p.nom+" — falta estado");return;}
+    if((d.estado==="Presente"||d.estado==="Tardanza")&&(!d.entrada||!d.salida)){faltan.push("• "+p.nom+" — falta horario");}
+  });
+  if(faltan.length){
+    alert("No puedes guardar todavía. Completa estos "+faltan.length+" dato(s):\n\n"+faltan.slice(0,12).join("\n")+(faltan.length>12?"\n…y "+(faltan.length-12)+" más":""));
+    return;
+  }
   const dm={};lista.forEach(p=>{if(reg[p.dni])dm[p.dni]=reg[p.dni]});
   const zona=(lista[0]||{}).zona||"";
   const entry={fecha:fecha.value,cd:cdSel.value,zona,supervisor:sup.value||"",ts:Date.now(),data:dm};
-  let arr=histLoad();
-  arr=arr.filter(e=>!(e.cd===entry.cd&&e.fecha===entry.fecha));
-  arr.unshift(entry);
-  if(arr.length>500)arr=arr.slice(0,500);
-  histSave(arr);
-  mostrarComprobante(entry.cd,entry.fecha,zona,entry.supervisor,dm);
+  dirty=false;
+  if(db){
+    db.ref("asistencias/"+keyOf(entry.cd,entry.fecha)).set(entry)
+      .then(()=>mostrarComprobante(entry.cd,entry.fecha,zona,entry.supervisor,dm))
+      .catch(e=>alert("No se pudo subir a la nube: "+e.message+"\nRevisa tu internet."));
+  }else{
+    let arr=[];try{arr=JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){}
+    arr=arr.filter(e=>!(e.cd===entry.cd&&e.fecha===entry.fecha));arr.unshift(entry);
+    localStorage.setItem(HKEY,JSON.stringify(arr));
+    mostrarComprobante(entry.cd,entry.fecha,zona,entry.supervisor,dm);
+  }
 }
 $("#guardar").onclick=guardarDia;
 function renderHist(){
