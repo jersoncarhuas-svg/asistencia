@@ -173,6 +173,29 @@ button.b{flex:1;border:none;border-radius:11px;padding:13px;font-size:14.5px;fon
   </div>
 </div></div>
 
+<div class="om" id="obsModal"><div class="card">
+  <div class="hd2"><div><h3>Reportar una observación</h3><p id="obsPers"></p></div><button class="x" id="obsX">&times;</button></div>
+  <div class="body">
+    <div class="warn"><b>Recordatorio</b><br>Recuerda marcar INGRESO y SALIDA en el biométrico. Esto es solo una nota, no un error.</div>
+    <div class="f"><label>Día observado</label><input type="date" id="obsFecha"></div>
+    <div class="f"><label>Horas laboradas</label><input type="text" id="obsHoras" placeholder="8"></div>
+    <div class="f"><label>Área de trabajo</label><input type="text" id="obsArea" placeholder="Picking, sorting…"></div>
+    <div class="f"><label>Motivo</label><select id="obsMotivo">
+      <option value="">— Selecciona —</option>
+      <option>Descanso médico</option><option>Cita médica</option>
+      <option>Dolor de estómago</option><option>Dolor de cuerpo</option>
+      <option>Problema familiar</option><option>Permiso</option><option>Otro</option></select></div>
+    <div class="f"><label>Observación</label><textarea id="obsNota" placeholder="Describe lo sucedido…"></textarea></div>
+    <div class="f"><label>Evidencia (foto)</label>
+      <input type="file" accept="image/*" multiple id="obsFile" class="fileinput">
+      <div class="thumbs" id="obsThumbs"></div>
+    </div>
+    <div class="f"><label>Así se enviará</label><div class="prev" id="obsPrev"></div></div>
+    <div class="send"><button class="b-wa" id="obsWA">Enviar por WhatsApp</button><button class="b-cp" id="obsCopy">Copiar mensaje</button></div>
+    <div class="note">Se abre WhatsApp con el mensaje ya escrito. Elige el grupo o contacto, y si subiste una foto, adjúntala con el clip 📎 (la foto queda guardada en tu galería). En algunos celulares la foto se manda junto con el texto automáticamente.</div>
+  </div>
+</div></div>
+
 <script>
 const PERSONAL = [{"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "45333960", "nom": "Anglas Aliaga Michael", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "47864984", "nom": "Arana Casas Jhack Mishell", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75460404", "nom": "Bonilla Huaman Alexander", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "44009052", "nom": "Bravo Macha Juan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "73787602", "nom": "Dominguez Vallejos Maria Jesùs", "cargo": "Asistente Administrativo"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75082129", "nom": "Malma Gambarini Jorge Luis", "cargo": "Auxiliar Mkp"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "72373698", "nom": "Aguilar Vasquez Fermi Moises", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "22433510", "nom": "Calderon Venancio Eduardo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "42662751", "nom": "Moscoso Valerio Digno Junior", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "77031180", "nom": "Pablo Camones Augusto", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "41717022", "nom": "Ramos Acuña Jose Manuel", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "75490845", "nom": "Rivera Trujillo Abel Aldair", "cargo": "Estibador"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "73095789", "nom": "Aquituari Ahuanari Huanrri", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "44544537", "nom": "Chanchari Valles Oliver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "42967514", "nom": "Chanchari Valles Vidal", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71110155", "nom": "Charpentier Mayanchi Jean Pool", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "47295540", "nom": "Eriberto Segundo Oroche Tamani", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70368464", "nom": "Mayanchi  Alvarado Jhonatan", "cargo": "Operario Inventario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "62598772", "nom": "Montalvan Zambrano Pool Zidane", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70841830", "nom": "Pinchi Cahuaza Andy Adrian", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "74046690", "nom": "Sangama Chanchari Marcelo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "5414399", "nom": "Sangama Noa Marcial", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71142813", "nom": "Suarez Navarro Carlos Antonio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "48175156", "nom": "Zambrano  Balceca  Royer Mayer", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "60326927", "nom": "Delgado Ruiz Jabes Orbin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75019464", "nom": "Farceque Tarrillo Gersin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47412657", "nom": "Isuiza Saavedra Macbride", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47526885", "nom": "Mayan Pizango Gonzalo Carter", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "46593287", "nom": "Valles Pizango Fernando", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75940272", "nom": "Vela Vasquez Jean Pear", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "61342505", "nom": "Oseda  Bardales Luis Miguel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71957337", "nom": "Rubina Davila Jose Jhordan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71784696", "nom": "Vargas Torres Walter Luis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "80313948", "nom": "Amasifuen Paredes Jenner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "45585249", "nom": "Cachique Sangama  Abner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73034921", "nom": "Chavez Tenazoa Natalia", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "47070152", "nom": "Isuiza Tenazoa Fiorella", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75243631", "nom": "Lozano Flores Jhon Alexis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73384354", "nom": "Paima Tenazoa Tony", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "1162606", "nom": "Pezo Ramirez Aldo", "cargo": "Asistente De Inventario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "70653334", "nom": "Ramos Roman Angel Heriberto", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75192135", "nom": "Sanchez Jimenez Deibi", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "954925", "nom": "Tenazoa Ramirez Crower", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47014661", "nom": "Huansi Huanio Reinerio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "77924633", "nom": "Olortegui Faustino Drinder Neyver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47262396", "nom": "Rojas Licla Juan Abel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75453612", "nom": "Huaya Ortiz Ronaldo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75494285", "nom": "Lozano Zumaeta Jhon Gonzalo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "60767190", "nom": "Salas Pizango Christofer", "cargo": "Operario"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "43558789", "nom": "Chavez Blanco Jesus", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "40504777", "nom": "Huaman Quispe Mario", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "80071575", "nom": "Pauccar Cusicuna Sebastian", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Ilo", "dni": "74777691", "nom": "Rodriguez Soto Gianfranco", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4749466", "nom": "Usandivares Cristhian Alberto", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4423556", "nom": "Valencia Salas Justo Benigno", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "73252356", "nom": "Vargas Gamero Sergio Adonae", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "71621902", "nom": "Carrillo Quispe Fernando Florentino", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "48700498", "nom": "Orosco Huamanccari Alexander", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "74575516", "nom": "Quenaya Quenta Jose Anthony Wildor", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "45366841", "nom": "Vizcarra Butron Jose Williams", "cargo": "Operario"}];
 const ESTADOS = ["","Presente","Tardanza","Falta","Permiso","Vacaciones"];
@@ -380,53 +403,25 @@ function abrirObs(dni){
   $("#obsModal").classList.add("on");
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-obs]");if(b)abrirObs(b.dataset.obs)});
-["obsFecha","obsHoras","obsArea","obsMotivo","obsNota"].forEach(id=>document.getElementById(id).addEventListener("input",obsRefresh));
+["obsFecha","obsHoras","obsArea","obsMotivo","obsNota"].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener("input",obsRefresh);el.addEventListener("change",obsRefresh);}});
 function addFiles(list){[...list].forEach(f=>{if(f)obsFiles.push(f)});obsThumbs();obsRefresh()}
 $("#obsFile").onchange=e=>{addFiles(e.target.files)};
 $("#obsX").onclick=()=>$("#obsModal").classList.remove("on");
 $("#obsModal").addEventListener("click",e=>{if(e.target.id==="obsModal")$("#obsModal").classList.remove("on")});
 $("#obsCopy").onclick=async()=>{try{await navigator.clipboard.writeText(obsMsg());$("#obsCopy").textContent="Copiado ✓";setTimeout(()=>$("#obsCopy").textContent="Copiar mensaje",1500)}catch(e){alert("Copia manual:\n\n"+obsMsg())}};
-function abrirWA(texto){
-  const url="https://wa.me/?text="+encodeURIComponent(texto);
-  const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";
-  document.body.appendChild(a);a.click();a.remove();
-}
 $("#obsWA").onclick=async()=>{
   const texto=obsMsg();
-  // Celular con foto: compartir foto + texto directo (único modo de mandar imagen desde web)
+  // 1) Si el celular puede compartir la foto directo a WhatsApp, lo intenta
   if(obsFiles.length && navigator.canShare && navigator.canShare({files:obsFiles})){
     try{await navigator.share({files:obsFiles,text:texto,title:"Reporte de observación"});return}
     catch(e){if(e&&e.name==="AbortError")return;}
   }
-  // Resto: copiar el mensaje y abrir WhatsApp con el texto listo
-  if(navigator.clipboard){navigator.clipboard.writeText(texto).catch(()=>{});}
-  if(obsFiles.length){alert("Se copió el mensaje y se abrirá WhatsApp. Pega el texto y adjunta la foto desde la galería (📎).");}
-  abrirWA(texto);
+  // 2) Garantizado: copia el mensaje y ABRE WhatsApp con el texto listo
+  try{if(navigator.clipboard)navigator.clipboard.writeText(texto);}catch(e){}
+  location.href="https://wa.me/?text="+encodeURIComponent(texto);
 };
 
 render();
 </script>
-<div class="om" id="obsModal"><div class="card">
-  <div class="hd2"><div><h3>Reportar una observación</h3><p id="obsPers"></p></div><button class="x" id="obsX">&times;</button></div>
-  <div class="body">
-    <div class="warn"><b>Recordatorio</b><br>Recuerda marcar INGRESO y SALIDA en el biométrico. Esto es solo una nota, no un error.</div>
-    <div class="f"><label>Día observado</label><input type="date" id="obsFecha"></div>
-    <div class="f"><label>Horas laboradas</label><input type="text" id="obsHoras" placeholder="8"></div>
-    <div class="f"><label>Área de trabajo</label><input type="text" id="obsArea" placeholder="Picking, sorting…"></div>
-    <div class="f"><label>Motivo</label><select id="obsMotivo">
-      <option value="">— Selecciona —</option>
-      <option>Descanso médico</option><option>Cita médica</option>
-      <option>Dolor de estómago</option><option>Dolor de cuerpo</option>
-      <option>Problema familiar</option><option>Permiso</option><option>Otro</option></select></div>
-    <div class="f"><label>Observación</label><textarea id="obsNota" placeholder="Describe lo sucedido…"></textarea></div>
-    <div class="f"><label>Evidencia (foto)</label>
-      <input type="file" accept="image/*" multiple id="obsFile" class="fileinput">
-      <div class="thumbs" id="obsThumbs"></div>
-    </div>
-    <div class="f"><label>Así se enviará</label><div class="prev" id="obsPrev"></div></div>
-    <div class="send"><button class="b-wa" id="obsWA">Enviar por WhatsApp</button><button class="b-cp" id="obsCopy">Copiar mensaje</button></div>
-    <div class="note">Se abrirá WhatsApp con el mensaje listo: elige el grupo o contacto y envíalo. Si adjuntaste fotos, en el celular se envían junto con el mensaje; en computadora tendrás que adjuntarlas en el chat.</div>
-  </div>
-</div></div>
 </body>
 </html>
