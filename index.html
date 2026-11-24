@@ -124,6 +124,12 @@ button.b{flex:1;border:none;border-radius:11px;padding:13px;font-size:14.5px;fon
 .b-wa{background:#25D366;color:#fff;border:none;border-radius:11px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
 .b-cp{background:#fff;color:var(--txt);border:1.5px solid var(--line);border-radius:11px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
 .om .note{font-size:11px;color:var(--mut);margin-top:10px;line-height:1.5}
+.hist-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+.hist-row .hx b{font-size:14px}
+.hist-row .hc{font-size:11px;color:var(--mut);margin-top:2px}
+.hist-acts{display:flex;gap:6px;flex-shrink:0}
+.hist-acts button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.hist-empty{text-align:center;color:var(--mut);padding:24px}
 @media(min-width:620px){.ctrls{grid-template-columns:1fr 1fr 1fr 1fr}.times{grid-column:auto}}
 </style>
 </head>
@@ -159,9 +165,10 @@ button.b{flex:1;border:none;border-radius:11px;padding:13px;font-size:14.5px;fon
 </div>
 
 <div class="bar"><div class="inner">
-  <button class="b b-ghost" id="todosP">Todos presentes</button>
+  <button class="b b-ghost" id="todosP">Todos</button>
+  <button class="b b-ghost" id="historial">Historial</button>
   <button class="b b-alt" id="excel">Excel</button>
-  <button class="b b-main" id="comprobante">Comprobante</button>
+  <button class="b b-main" id="guardar">Guardar</button>
 </div></div>
 
 <!-- MODAL -->
@@ -194,6 +201,11 @@ button.b{flex:1;border:none;border-radius:11px;padding:13px;font-size:14.5px;fon
     <div class="send"><button class="b-wa" id="obsWA">Enviar por WhatsApp</button><button class="b-cp" id="obsCopy">Copiar mensaje</button></div>
     <div class="note">Se abre WhatsApp con el mensaje ya escrito. Elige el grupo o contacto, y si subiste una foto, adjúntala con el clip 📎 (la foto queda guardada en tu galería). En algunos celulares la foto se manda junto con el texto automáticamente.</div>
   </div>
+</div></div>
+
+<div class="om" id="histModal"><div class="card">
+  <div class="hd2"><div><h3>Historial de asistencias</h3><p>Días guardados en este dispositivo</p></div><button class="x" id="histX">&times;</button></div>
+  <div class="body"><button class="b b-main" id="histAll" style="width:100%;margin-bottom:12px">⬇️ Descargar TODO el historial (Excel)</button><div id="histList"></div></div>
 </div></div>
 
 <script>
@@ -305,30 +317,45 @@ $("#todosP").onclick=()=>{
   salvar(reg);render();
 };
 
-$("#excel").onclick=()=>{
-  const lista=PERSONAL.filter(p=>p.cd===cdSel.value);
+// ---- Resumen desde un mapa de datos ----
+function resumenDe(cd,dm){
+  const lista=PERSONAL.filter(p=>p.cd===cd);
+  const c={Presente:0,Tardanza:0,Falta:0,Permiso:0,Vacaciones:0};
+  lista.forEach(p=>{const d=dm[p.dni];if(d&&d.estado&&c[d.estado]!=null)c[d.estado]++});
+  const m=Object.values(c).reduce((a,b)=>a+b,0);
+  return {total:lista.length,c,sin:lista.length-m};
+}
+// ---- Excel ----
+function exportExcel(cd,fe,dm,supv){
+  const lista=PERSONAL.filter(p=>p.cd===cd);
   const filas=[["Fecha","Centro de costo","CD","DNI","Nombre","Cargo","Estado","Turno","Entrada","Salida","Supervisor"]];
-  lista.forEach(p=>{const d=reg[p.dni]||{};filas.push([fecha.value,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.turno||"",d.entrada||"",d.salida||"",sup.value||""])});
-  const nombre="Asistencia_"+cdSel.value+"_"+fecha.value;
-  if(window.XLSX){
-    const ws=XLSX.utils.aoa_to_sheet(filas);
-    ws["!cols"]=[{wch:11},{wch:20},{wch:15},{wch:11},{wch:30},{wch:22},{wch:12},{wch:14},{wch:9},{wch:9},{wch:18}];
-    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Asistencia");XLSX.writeFile(wb,nombre+".xlsx");
-  }else{
-    let csv="";filas.forEach(r=>{csv+=r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(",")+"\n"});
-    const b=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"});
-    const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=nombre+".csv";a.click();
-  }
-};
+  lista.forEach(p=>{const d=dm[p.dni]||{};filas.push([fe,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.turno||"",d.entrada||"",d.salida||"",supv||""])});
+  const nombre="Asistencia_"+cd+"_"+fe;
+  if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(filas);ws["!cols"]=[{wch:11},{wch:20},{wch:15},{wch:11},{wch:30},{wch:22},{wch:12},{wch:14},{wch:9},{wch:9},{wch:18}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Asistencia");XLSX.writeFile(wb,nombre+".xlsx");}
+  else{let csv="";filas.forEach(r=>{csv+=r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(",")+"\n"});const b=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=nombre+".csv";a.click();}
+}
+$("#excel").onclick=()=>exportExcel(cdSel.value,fecha.value,reg,sup.value);
+function exportExcelAll(){
+  const arr=histLoad();
+  if(!arr.length){alert("Todavía no hay días guardados en el historial.");return}
+  const filas=[["Fecha","Centro de costo","CD","DNI","Nombre","Cargo","Estado","Turno","Entrada","Salida","Supervisor"]];
+  const sorted=arr.slice().sort((a,b)=> a.fecha<b.fecha?-1:(a.fecha>b.fecha?1:(a.cd<b.cd?-1:1)));
+  sorted.forEach(e=>{PERSONAL.filter(p=>p.cd===e.cd).forEach(p=>{const d=(e.data||{})[p.dni]||{};filas.push([e.fecha,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.turno||"",d.entrada||"",d.salida||"",e.supervisor||""])})});
+  const nombre="Historial_Asistencias";
+  if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(filas);ws["!cols"]=[{wch:11},{wch:20},{wch:15},{wch:11},{wch:30},{wch:22},{wch:12},{wch:14},{wch:9},{wch:9},{wch:18}];ws["!autofilter"]={ref:"A1:K1"};const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Historial");XLSX.writeFile(wb,nombre+".xlsx");}
+  else{let csv="";filas.forEach(r=>{csv+=r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(",")+"\n"});const b=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=nombre+".csv";a.click();}
+}
+$("#histAll").onclick=exportExcelAll;
 
-// ---- Comprobante ----
-$("#comprobante").onclick=()=>{
-  const {total,c,sin}=conteo();
-  const f=fecha.value.split("-").reverse().join("/");
-  const p0=PERSONAL.find(p=>p.cd===cdSel.value)||{};
+// ---- Comprobante (desde cualquier mapa de datos) ----
+let tkName="Comprobante";
+function mostrarComprobante(cd,fe,zona,supv,dm){
+  const {total,c,sin}=resumenDe(cd,dm);
+  const f=(fe||"").split("-").reverse().join("/");
+  tkName="Comprobante_"+cd+"_"+fe;
   $("#ticket").innerHTML=`
-    <div class="tk-h"><svg viewBox="0 0 300 92" width="96" height="30" aria-label="Lavoro"><rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/><rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/><text x="0" y="70" font-family="Nunito,Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text></svg><div><h3>Comprobante de Asistencia</h3><p>${p0.zona||""}</p></div></div>
-    <div class="tk-meta"><b>CD:</b> ${cdSel.value}<br><b>Fecha:</b> ${f}<br>${sup.value?('<b>Supervisor:</b> '+sup.value+'<br>'):''}<b>Total personal:</b> ${total}</div>
+    <div class="tk-h"><svg viewBox="0 0 300 92" width="96" height="30" aria-label="Lavoro"><rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/><rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/><text x="0" y="70" font-family="Nunito,Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text></svg><div><h3>Comprobante de Asistencia</h3><p>${zona||""}</p></div></div>
+    <div class="tk-meta"><b>CD:</b> ${cd}<br><b>Fecha:</b> ${f}<br>${supv?('<b>Supervisor:</b> '+supv+'<br>'):''}<b>Total personal:</b> ${total}</div>
     <div class="tk-grid">
       <div class="tk-cell"><div class="n" style="color:#00A85A">${c.Presente}</div><div class="l">Presentes</div></div>
       <div class="tk-cell"><div class="n" style="color:#E8A000">${c.Tardanza}</div><div class="l">Tardanzas</div></div>
@@ -338,17 +365,46 @@ $("#comprobante").onclick=()=>{
       <div class="tk-cell"><div class="n" style="color:#98A2B3">${sin}</div><div class="l">Sin marcar</div></div>
     </div>
     <div class="tk-ltit">Detalle del personal</div>
-    <div class="tk-list">${PERSONAL.filter(p=>p.cd===cdSel.value).map(p=>{const d=reg[p.dni]||{};const hr=(d.entrada||d.salida)?((d.entrada||"--")+" – "+(d.salida||"--")):"";return `<div class="tk-row"><div><div class="nm">${p.nom}</div><div class="cg">${p.cargo}</div></div><div class="hr">${hr||"—"}<span class="es">${d.estado||"sin marcar"}</span></div></div>`}).join("")}</div>
+    <div class="tk-list">${PERSONAL.filter(p=>p.cd===cd).map(p=>{const d=dm[p.dni]||{};const hr=(d.entrada||d.salida)?((d.entrada||"--")+" – "+(d.salida||"--")):"";return `<div class="tk-row"><div><div class="nm">${p.nom}</div><div class="cg">${p.cargo}</div></div><div class="hr">${hr||"—"}<span class="es">${d.estado||"sin marcar"}</span></div></div>`}).join("")}</div>
     <div class="tk-foot">Generado el ${new Date().toLocaleString("es-PE",{timeZone:"America/Lima"})} · Lavoro</div>`;
   $("#modal").classList.add("on");
-};
+}
+
+// ---- Guardar día + Historial ----
+const HKEY="hist_asist_v1";
+function histLoad(){try{return JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){return[]}}
+function histSave(a){localStorage.setItem(HKEY,JSON.stringify(a))}
+function guardarDia(){
+  const lista=PERSONAL.filter(p=>p.cd===cdSel.value);
+  const dm={};lista.forEach(p=>{if(reg[p.dni])dm[p.dni]=reg[p.dni]});
+  const zona=(lista[0]||{}).zona||"";
+  const entry={fecha:fecha.value,cd:cdSel.value,zona,supervisor:sup.value||"",ts:Date.now(),data:dm};
+  let arr=histLoad();
+  arr=arr.filter(e=>!(e.cd===entry.cd&&e.fecha===entry.fecha));
+  arr.unshift(entry);
+  if(arr.length>500)arr=arr.slice(0,500);
+  histSave(arr);
+  mostrarComprobante(entry.cd,entry.fecha,zona,entry.supervisor,dm);
+}
+$("#guardar").onclick=guardarDia;
+function renderHist(){
+  const arr=histLoad();const box=$("#histList");
+  if(!arr.length){box.innerHTML='<div class="hist-empty">Aún no has guardado ningún día.</div>';return}
+  box.innerHTML=arr.map((e,i)=>{const r=resumenDe(e.cd,e.data);const f=e.fecha.split("-").reverse().join("/");return `<div class="hist-row"><div class="hx"><b>${e.cd}</b> · ${f}<div class="hc">Pres ${r.c.Presente} · Falt ${r.c.Falta} · Tard ${r.c.Tardanza}${e.supervisor?(' · '+e.supervisor):''}</div></div><div class="hist-acts"><button data-hv="${i}">Ver</button><button data-hx="${i}">Excel</button></div></div>`}).join("");
+  box.querySelectorAll("[data-hv]").forEach(b=>b.onclick=()=>{const e=histLoad()[+b.dataset.hv];$("#histModal").classList.remove("on");mostrarComprobante(e.cd,e.fecha,e.zona,e.supervisor,e.data)});
+  box.querySelectorAll("[data-hx]").forEach(b=>b.onclick=()=>{const e=histLoad()[+b.dataset.hx];exportExcel(e.cd,e.fecha,e.data,e.supervisor)});
+}
+$("#historial").onclick=()=>{renderHist();$("#histModal").classList.add("on")};
+$("#histX").onclick=()=>$("#histModal").classList.remove("on");
+$("#histModal").addEventListener("click",e=>{if(e.target.id==="histModal")$("#histModal").classList.remove("on")});
+
 $("#cerrar").onclick=()=>$("#modal").classList.remove("on");
 $("#modal").addEventListener("click",e=>{if(e.target.id==="modal")$("#modal").classList.remove("on")});
 $("#descImg").onclick=()=>{
   if(!window.html2canvas){alert("Toma una captura de pantalla para compartir.");return}
   html2canvas($("#ticket"),{scale:2,backgroundColor:"#ffffff"}).then(cv=>{
     const a=document.createElement("a");a.href=cv.toDataURL("image/png");
-    a.download="Comprobante_"+cdSel.value+"_"+fecha.value+".png";a.click();
+    a.download=tkName+".png";a.click();
   });
 };
 
