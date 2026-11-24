@@ -114,6 +114,7 @@ button.b{flex:1;border:none;border-radius:11px;padding:13px;font-size:14.5px;fon
 .ph-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .phb{display:flex;align-items:center;justify-content:center;gap:6px;background:#f1f4f8;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--txt);font-family:inherit}
 .ph-btns label{display:flex;align-items:center;justify-content:center;gap:6px;background:#f1f4f8;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--txt)}
+.fileinput{width:100%;padding:12px;border:1.5px dashed var(--azul);border-radius:10px;font-size:14px;background:#f1f6fc;font-family:inherit;color:var(--txt)}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .thumb{position:relative;width:60px;height:60px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
 .thumb img{width:100%;height:100%;object-fit:cover}
@@ -375,34 +376,32 @@ function abrirObs(dni){
   $("#obsFecha").value=fecha.value;
   const d=reg[dni]||{};
   $("#obsHoras").value="";$("#obsArea").value=obsP.cargo;$("#obsMotivo").value="";$("#obsNota").value="";
-  obsThumbs();obsRefresh();
+  const fi=$("#obsFile");if(fi)fi.value="";obsThumbs();obsRefresh();
   $("#obsModal").classList.add("on");
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-obs]");if(b)abrirObs(b.dataset.obs)});
 ["obsFecha","obsHoras","obsArea","obsMotivo","obsNota"].forEach(id=>document.getElementById(id).addEventListener("input",obsRefresh));
-function addFiles(list){[...list].forEach(f=>{if(f&&f.type&&f.type.indexOf("image")===0)obsFiles.push(f)});obsThumbs();obsRefresh()}
-$("#btnCam").onclick=()=>$("#obsCam").click();
-$("#btnGal").onclick=()=>$("#obsGal").click();
-$("#obsCam").onchange=e=>{addFiles(e.target.files);e.target.value="";};
-$("#obsGal").onchange=e=>{addFiles(e.target.files);e.target.value="";};
+function addFiles(list){[...list].forEach(f=>{if(f)obsFiles.push(f)});obsThumbs();obsRefresh()}
+$("#obsFile").onchange=e=>{addFiles(e.target.files)};
 $("#obsX").onclick=()=>$("#obsModal").classList.remove("on");
 $("#obsModal").addEventListener("click",e=>{if(e.target.id==="obsModal")$("#obsModal").classList.remove("on")});
 $("#obsCopy").onclick=async()=>{try{await navigator.clipboard.writeText(obsMsg());$("#obsCopy").textContent="Copiado ✓";setTimeout(()=>$("#obsCopy").textContent="Copiar mensaje",1500)}catch(e){alert("Copia manual:\n\n"+obsMsg())}};
+function abrirWA(texto){
+  const url="https://wa.me/?text="+encodeURIComponent(texto);
+  const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";
+  document.body.appendChild(a);a.click();a.remove();
+}
 $("#obsWA").onclick=async()=>{
   const texto=obsMsg();
-  // Celular con foto: compartir imagen + texto
+  // Celular con foto: compartir foto + texto directo (único modo de mandar imagen desde web)
   if(obsFiles.length && navigator.canShare && navigator.canShare({files:obsFiles})){
     try{await navigator.share({files:obsFiles,text:texto,title:"Reporte de observación"});return}
     catch(e){if(e&&e.name==="AbortError")return;}
   }
-  // Celular sin soporte de archivos: compartir solo texto
-  if(navigator.share && !obsFiles.length){
-    try{await navigator.share({text:texto,title:"Reporte de observación"});return}
-    catch(e){if(e&&e.name==="AbortError")return;}
-  }
-  // WhatsApp directo con el texto (si hay foto, recordar adjuntarla)
-  if(obsFiles.length){try{await navigator.clipboard.writeText(texto)}catch(e){}}
-  location.href="https://wa.me/?text="+encodeURIComponent(texto);
+  // Resto: copiar el mensaje y abrir WhatsApp con el texto listo
+  if(navigator.clipboard){navigator.clipboard.writeText(texto).catch(()=>{});}
+  if(obsFiles.length){alert("Se copió el mensaje y se abrirá WhatsApp. Pega el texto y adjunta la foto desde la galería (📎).");}
+  abrirWA(texto);
 };
 
 render();
@@ -421,12 +420,7 @@ render();
       <option>Problema familiar</option><option>Permiso</option><option>Otro</option></select></div>
     <div class="f"><label>Observación</label><textarea id="obsNota" placeholder="Describe lo sucedido…"></textarea></div>
     <div class="f"><label>Evidencia (foto)</label>
-      <div class="ph-btns">
-        <button type="button" class="phb" id="btnCam">📷 Tomar foto</button>
-        <button type="button" class="phb" id="btnGal">🖼️ Galería</button>
-      </div>
-      <input type="file" accept="image/*" capture="environment" id="obsCam" style="position:absolute;left:-9999px">
-      <input type="file" accept="image/*" multiple id="obsGal" style="position:absolute;left:-9999px">
+      <input type="file" accept="image/*" multiple id="obsFile" class="fileinput">
       <div class="thumbs" id="obsThumbs"></div>
     </div>
     <div class="f"><label>Así se enviará</label><div class="prev" id="obsPrev"></div></div>
