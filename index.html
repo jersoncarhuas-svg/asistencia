@@ -112,6 +112,7 @@ button.b{flex:1;border:none;border-radius:11px;padding:13px;font-size:14.5px;fon
 .om textarea{width:100%;min-height:70px;padding:11px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;resize:vertical}
 .om textarea:focus,.om input:focus,.om select:focus{outline:none;border-color:var(--azul)}
 .ph-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.phb{display:flex;align-items:center;justify-content:center;gap:6px;background:#f1f4f8;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--txt);font-family:inherit}
 .ph-btns label{display:flex;align-items:center;justify-content:center;gap:6px;background:#f1f4f8;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--txt)}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .thumb{position:relative;width:60px;height:60px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
@@ -335,7 +336,7 @@ $("#entrar").onclick=()=>{if($("#pwd").value===CLAVE_SUP)abrir();else $("#err").
 $("#pwd").addEventListener("keydown",e=>{if(e.key==="Enter")$("#entrar").click()});
 
 // ---- Service worker (PWA) ----
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+if("serviceWorker" in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));if(window.caches){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)))}}
 
 // ---- Reportar observacion ----
 let obsP=null, obsFiles=[];
@@ -379,18 +380,29 @@ function abrirObs(dni){
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-obs]");if(b)abrirObs(b.dataset.obs)});
 ["obsFecha","obsHoras","obsArea","obsMotivo","obsNota"].forEach(id=>document.getElementById(id).addEventListener("input",obsRefresh));
-function addFiles(list){[...list].forEach(f=>obsFiles.push(f));obsThumbs();obsRefresh()}
-$("#obsCam").onchange=e=>addFiles(e.target.files);
-$("#obsGal").onchange=e=>addFiles(e.target.files);
+function addFiles(list){[...list].forEach(f=>{if(f&&f.type&&f.type.indexOf("image")===0)obsFiles.push(f)});obsThumbs();obsRefresh()}
+$("#btnCam").onclick=()=>$("#obsCam").click();
+$("#btnGal").onclick=()=>$("#obsGal").click();
+$("#obsCam").onchange=e=>{addFiles(e.target.files);e.target.value="";};
+$("#obsGal").onchange=e=>{addFiles(e.target.files);e.target.value="";};
 $("#obsX").onclick=()=>$("#obsModal").classList.remove("on");
 $("#obsModal").addEventListener("click",e=>{if(e.target.id==="obsModal")$("#obsModal").classList.remove("on")});
 $("#obsCopy").onclick=async()=>{try{await navigator.clipboard.writeText(obsMsg());$("#obsCopy").textContent="Copiado ✓";setTimeout(()=>$("#obsCopy").textContent="Copiar mensaje",1500)}catch(e){alert("Copia manual:\n\n"+obsMsg())}};
 $("#obsWA").onclick=async()=>{
   const texto=obsMsg();
+  // Celular con foto: compartir imagen + texto
   if(obsFiles.length && navigator.canShare && navigator.canShare({files:obsFiles})){
-    try{await navigator.share({files:obsFiles,text:texto,title:"Reporte de observación"});return}catch(e){if(e&&e.name==="AbortError")return}
+    try{await navigator.share({files:obsFiles,text:texto,title:"Reporte de observación"});return}
+    catch(e){if(e&&e.name==="AbortError")return;}
   }
-  window.open("https://wa.me/?text="+encodeURIComponent(texto),"_blank");
+  // Celular sin soporte de archivos: compartir solo texto
+  if(navigator.share && !obsFiles.length){
+    try{await navigator.share({text:texto,title:"Reporte de observación"});return}
+    catch(e){if(e&&e.name==="AbortError")return;}
+  }
+  // WhatsApp directo con el texto (si hay foto, recordar adjuntarla)
+  if(obsFiles.length){try{await navigator.clipboard.writeText(texto)}catch(e){}}
+  location.href="https://wa.me/?text="+encodeURIComponent(texto);
 };
 
 render();
@@ -398,7 +410,7 @@ render();
 <div class="om" id="obsModal"><div class="card">
   <div class="hd2"><div><h3>Reportar una observación</h3><p id="obsPers"></p></div><button class="x" id="obsX">&times;</button></div>
   <div class="body">
-    <div class="warn"><b>Importante</b><br>Si no figura la marcación en el BIOMÉTRICO no se procederá a la corrección. Recuerda marcar INGRESO y SALIDA.</div>
+    <div class="warn"><b>Recordatorio</b><br>Recuerda marcar INGRESO y SALIDA en el biométrico. Esto es solo una nota, no un error.</div>
     <div class="f"><label>Día observado</label><input type="date" id="obsFecha"></div>
     <div class="f"><label>Horas laboradas</label><input type="text" id="obsHoras" placeholder="8"></div>
     <div class="f"><label>Área de trabajo</label><input type="text" id="obsArea" placeholder="Picking, sorting…"></div>
@@ -410,9 +422,11 @@ render();
     <div class="f"><label>Observación</label><textarea id="obsNota" placeholder="Describe lo sucedido…"></textarea></div>
     <div class="f"><label>Evidencia (foto)</label>
       <div class="ph-btns">
-        <label><span>📷 Tomar foto</span><input type="file" accept="image/*" capture="environment" id="obsCam" hidden></label>
-        <label><span>🖼️ Galería</span><input type="file" accept="image/*" multiple id="obsGal" hidden></label>
+        <button type="button" class="phb" id="btnCam">📷 Tomar foto</button>
+        <button type="button" class="phb" id="btnGal">🖼️ Galería</button>
       </div>
+      <input type="file" accept="image/*" capture="environment" id="obsCam" style="position:absolute;left:-9999px">
+      <input type="file" accept="image/*" multiple id="obsGal" style="position:absolute;left:-9999px">
       <div class="thumbs" id="obsThumbs"></div>
     </div>
     <div class="f"><label>Así se enviará</label><div class="prev" id="obsPrev"></div></div>
