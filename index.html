@@ -2,92 +2,197 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Control de Asistencia — Backus Log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Control de Asistencia — Lavoro</title>
+<meta name="theme-color" content="#0F63AC">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Asistencia">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-:root{--azul:#0F63AC;--azul2:#0b4e89;--verde:#00A85A;--rojo:#EC3237;--bg:#f1f5fa;--card:#fff;--line:#dde6f0;--txt:#0f1a28;--mut:#5b6472}
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt)}
-header{background:#fff;border-bottom:4px solid var(--azul);padding:12px 18px}
-.hd-top{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.logo{background:#fff;display:flex;align-items:center}
-.hd-ti h1{margin:0;font-size:18px;font-weight:800;color:var(--azul)}
-.hd-ti p{margin:2px 0 0;font-size:13px;color:var(--mut)}
-
-
-.wrap{max-width:1000px;margin:0 auto;padding:14px}
-.controls{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px}
-.fld{display:flex;flex-direction:column;gap:4px}
+:root{--azul:#0F63AC;--azul-d:#0b4e89;--azul-l:#e8f1fb;--verde:#00A85A;--rojo:#EC3237;
+--bg:#eef2f7;--card:#ffffff;--line:#e3e9f1;--txt:#101828;--mut:#687385;--radius:14px;
+--sh:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.08)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Inter',-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:84px}
+/* ---- LOGIN ---- */
+.lock{position:fixed;inset:0;background:linear-gradient(160deg,#0F63AC,#0b4e89);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+.lock .box{background:#fff;border-radius:22px;padding:30px 26px;width:330px;max-width:92vw;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.lock h2{margin:14px 0 2px;font-size:21px;font-weight:800}
+.lock p{margin:0 0 18px;color:var(--mut);font-size:13.5px}
+.lock input{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:12px;font-size:16px;text-align:center;margin-bottom:12px;font-family:inherit}
+.lock input:focus{outline:none;border-color:var(--azul)}
+.lock button{width:100%;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer}
+.lock .err{color:var(--rojo);font-size:13px;min-height:18px;margin-bottom:4px}
+/* ---- HEADER ---- */
+header{background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;position:sticky;top:0;z-index:20}
+.hd{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hd .ti h1{margin:0;font-size:17px;font-weight:800;color:var(--azul);line-height:1.1}
+.hd .ti p{margin:2px 0 0;font-size:12px;color:var(--mut)}
+.wrap{max-width:1040px;margin:0 auto;padding:16px}
+/* ---- CONTROLES ---- */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh);padding:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fld{display:flex;flex-direction:column;gap:5px}
 .fld label{font-size:12px;color:var(--mut);font-weight:600}
-select,input[type=date],input[type=search]{padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;color:var(--txt);min-height:40px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
-.chip b{font-weight:700}
-.c-pre{color:#00A85A}.c-tar{color:#9a6a00}.c-fal{color:#EC3237}.c-per{color:#5b4bbf}.c-vac{color:#0c6ca8}
-.tbl{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.row{display:grid;grid-template-columns:1fr 128px 108px 108px;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
-.row.head{background:#eaf1fb;font-size:12px;color:var(--mut);font-weight:700;border-top:none;position:sticky;top:0}
-.nm{font-weight:700;font-size:14px;line-height:1.25}
-.sub{font-size:12px;color:var(--mut)}
-.row select,.row input{width:100%;min-height:38px}
-.st-Presente{background:#e7f6ec}.st-Tardanza{background:#fdf3df}.st-Falta{background:#fde7e7}
-.st-Permiso{background:#efecfb}.st-Vacaciones{background:#e4f1fa}
-.bar{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 14px;display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;border-radius:0 0 12px 12px}
-button{border:none;border-radius:8px;padding:11px 16px;font-size:14px;font-weight:600;cursor:pointer}
-.btn{background:var(--azul);color:#fff}.btn:hover{background:var(--azul2)}
-.btn2{background:#fff;color:var(--txt);border:1px solid var(--line)}
-.saved{font-size:13px;color:var(--mut);align-self:center}
-.empty{padding:30px;text-align:center;color:var(--mut)}
-@media(max-width:620px){.row{grid-template-columns:1fr 96px;grid-template-areas:"nm nm" "est est" "ent sal"}.col-nm{grid-area:nm}.col-est{grid-area:est}.col-ent{grid-area:ent}.col-sal{grid-area:sal}.row.head{display:none}.row input,.row select{min-height:42px}}
-.lock{position:fixed;inset:0;background:#0F63AC;display:flex;align-items:center;justify-content:center;z-index:50}
-.lock .box{background:#fff;border-radius:16px;padding:28px 26px;width:300px;max-width:90vw;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.25)}
-.lock h2{margin:8px 0 2px;color:#0F63AC;font-size:20px}
-.lock p{margin:0 0 16px;color:#5b6472;font-size:13px}
-.lock input{width:100%;padding:11px;border:1px solid #dde6f0;border-radius:8px;font-size:15px;text-align:center;margin-bottom:10px}
-.lock button{width:100%;background:#0F63AC;color:#fff;border:none;border-radius:8px;padding:11px;font-size:15px;font-weight:700;cursor:pointer}
-.lock .err{color:#EC3237;font-size:13px;min-height:18px}
+select,input[type=date],input[type=search],input[type=time],input[type=text]{padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;background:#fff;color:var(--txt);font-family:inherit;width:100%}
+select:focus,input:focus{outline:none;border-color:var(--azul)}
+.search-row{margin-top:12px}
+/* ---- RESUMEN CHIPS ---- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:var(--sh)}
+.chip b{font-weight:800;font-size:14px}
+.dot{width:8px;height:8px;border-radius:50%}
+.d-pre{background:var(--verde)}.d-tar{background:#E8A000}.d-fal{background:var(--rojo)}
+.d-per{background:#6A5BDF}.d-vac{background:#0C86C4}.d-sin{background:#B4BCC8}
+/* ---- TARJETAS DE PERSONA ---- */
+.emp{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh);padding:14px;margin-bottom:10px;border-left:4px solid var(--line);transition:border-color .15s}
+.emp.s-Presente{border-left-color:var(--verde)}.emp.s-Tardanza{border-left-color:#E8A000}
+.emp.s-Falta{border-left-color:var(--rojo)}.emp.s-Permiso{border-left-color:#6A5BDF}.emp.s-Vacaciones{border-left-color:#0C86C4}
+.emp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
+.emp-nm{font-weight:700;font-size:15.5px;line-height:1.25}
+.emp-sub{font-size:12.5px;color:var(--mut);margin-top:2px}
+.ctrls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ctrls .full{grid-column:1 / -1}
+.lbl{font-size:11px;color:var(--mut);font-weight:600;margin-bottom:4px;display:block}
+.times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.times.hide{display:none}
+/* ---- BARRA INFERIOR ---- */
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;z-index:30;box-shadow:0 -2px 10px rgba(16,24,40,.06);padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.bar .inner{max-width:1040px;margin:0 auto;display:flex;gap:10px;width:100%}
+button.b{flex:1;border:none;border-radius:11px;padding:13px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.b-main{background:var(--azul);color:#fff}.b-main:active{background:var(--azul-d)}
+.b-alt{background:#fff;color:var(--azul);border:1.5px solid var(--azul)}
+.b-ghost{background:#f1f4f8;color:var(--txt)}
+.empty{padding:34px;text-align:center;color:var(--mut)}
+/* ---- MODAL COMPROBANTE ---- */
+.modal{position:fixed;inset:0;background:rgba(16,24,40,.6);display:none;align-items:flex-start;justify-content:center;z-index:70;padding:16px;overflow:auto}
+.modal.on{display:flex}
+.modal .sheet{background:#fff;border-radius:18px;max-width:420px;width:100%;overflow:hidden;margin:auto}
+.modal .mbar{display:flex;gap:10px;padding:14px}
+#ticket{padding:22px;background:linear-gradient(160deg,#fff,#f4f8fd)}
+.tk-h{display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--azul-l);padding-bottom:12px;margin-bottom:14px}
+.tk-h h3{margin:0;font-size:16px;color:var(--azul);font-weight:800}
+.tk-h p{margin:1px 0 0;font-size:12px;color:var(--mut)}
+.tk-meta{font-size:13px;margin-bottom:12px;line-height:1.7}
+.tk-meta b{color:var(--azul)}
+.tk-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.tk-cell{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}
+.tk-cell .n{font-size:20px;font-weight:800;line-height:1}
+.tk-cell .l{font-size:10.5px;color:var(--mut);margin-top:3px;text-transform:uppercase;letter-spacing:.3px}
+.tk-foot{font-size:11px;color:var(--mut);text-align:center;border-top:1px dashed var(--line);padding-top:10px}
+.tk-list{border-top:2px solid var(--azul-l);margin-top:4px}
+.tk-row{display:grid;grid-template-columns:1fr auto;gap:8px;padding:7px 2px;border-bottom:1px solid #eef2f7;font-size:12px}
+.tk-row .nm{font-weight:600;line-height:1.2}
+.tk-row .cg{font-size:10.5px;color:var(--mut)}
+.tk-row .hr{text-align:right;white-space:nowrap;font-weight:600}
+.tk-row .es{font-size:10px;color:var(--mut);display:block;font-weight:500}
+.tk-ltit{font-size:12px;font-weight:800;color:var(--azul);margin:14px 0 2px}
+.btn-obs{margin-top:10px;width:100%;background:#fff;color:var(--azul);border:1.5px solid var(--azul);border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-obs:active{background:var(--azul-l)}
+.om{position:fixed;inset:0;background:rgba(16,24,40,.6);display:none;align-items:flex-start;justify-content:center;z-index:80;padding:14px;overflow:auto}
+.om.on{display:flex}
+.om .card{background:#fff;border-radius:18px;max-width:440px;width:100%;margin:auto;overflow:hidden}
+.om .hd2{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 18px 6px}
+.om .hd2 h3{margin:0;font-size:17px;font-weight:800}
+.om .hd2 p{margin:3px 0 0;font-size:12px;color:var(--mut)}
+.om .x{border:none;background:#f1f4f8;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;color:var(--mut)}
+.om .body{padding:6px 18px 18px}
+.warn{background:#FFF7E6;border:1px solid #F5D98B;border-radius:10px;padding:10px 12px;font-size:12px;color:#7A5B00;margin:8px 0 14px}
+.warn b{color:#7A5B00}
+.om .f{margin-bottom:12px}
+.om .f label{display:block;font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px}
+.om textarea{width:100%;min-height:70px;padding:11px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;resize:vertical}
+.om textarea:focus,.om input:focus,.om select:focus{outline:none;border-color:var(--azul)}
+.ph-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ph-btns label{display:flex;align-items:center;justify-content:center;gap:6px;background:#f1f4f8;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--txt)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.thumb{position:relative;width:60px;height:60px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .rm{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;width:18px;height:18px;border-radius:50%;font-size:11px;cursor:pointer;line-height:1}
+.prev{background:#f6f8fb;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:12px;white-space:pre-wrap;color:#344054;max-height:140px;overflow:auto}
+.om .send{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.b-wa{background:#25D366;color:#fff;border:none;border-radius:11px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.b-cp{background:#fff;color:var(--txt);border:1.5px solid var(--line);border-radius:11px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.om .note{font-size:11px;color:var(--mut);margin-top:10px;line-height:1.5}
+@media(min-width:620px){.ctrls{grid-template-columns:1fr 1fr 1fr 1fr}.times{grid-column:auto}}
 </style>
 </head>
 <body>
-<div class="lock" id="lock"><div class="box"><svg viewBox="0 0 300 92" width="120" height="37" aria-label="Lavoro"><rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/><rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/><text x="0" y="70" font-family="Nunito,Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text></svg><h2>Control de Asistencia</h2><p>Ingresa la clave de supervisor</p><input type="password" id="pwd" placeholder="Clave" autocomplete="off"><div class="err" id="err"></div><button id="entrar">Entrar</button></div></div>
-<header>
-  <div class="hd-top">
-    <div class="logo"><svg viewBox="0 0 300 92" width="150" height="46" role="img" aria-label="Lavoro" xmlns="http://www.w3.org/2000/svg">
-  <rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/>
-  <rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/>
-  <text x="0" y="70" font-family="'Nunito','Baloo 2',Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text>
-</svg></div>
-    <div class="hd-ti"><h1>Control de Asistencia</h1><p>Backus Log — Oriente y Sur</p></div>
-  </div>
-</header>
+
+<!-- LOGIN -->
+<div class="lock" id="lock"><div class="box">
+  <svg viewBox="0 0 300 92" width="150" height="46" aria-label="Lavoro" xmlns="http://www.w3.org/2000/svg"><rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/><rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/><text x="0" y="70" font-family="Nunito,Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text></svg>
+  <h2>Control de Asistencia</h2>
+  <p>Ingresa la clave de supervisor</p>
+  <input type="password" id="pwd" placeholder="Clave" autocomplete="off" inputmode="text">
+  <div class="err" id="err"></div>
+  <button id="entrar">Entrar</button>
+</div></div>
+
+<!-- APP -->
+<header><div class="hd"><svg viewBox="0 0 300 92" width="118" height="36" aria-label="Lavoro"><rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/><rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/><text x="0" y="70" font-family="Nunito,Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text></svg><div class="ti"><h1>Control de Asistencia</h1><p>Backus Log · Oriente y Sur</p></div></div></header>
+
 <div class="wrap">
-  <div class="controls">
-    <div class="fld"><label>Centro de distribución</label><select id="cd"></select></div>
-    <div class="fld"><label>Fecha</label><input type="date" id="fecha"></div>
-    <div class="fld" style="flex:1;min-width:160px"><label>Buscar persona</label><input type="search" id="buscar" placeholder="Nombre o DNI…"></div>
+  <div class="panel">
+    <div class="grid">
+      <div class="fld"><label>Centro de distribución</label><select id="cd"></select></div>
+      <div class="fld"><label>Fecha</label><input type="date" id="fecha"></div>
+    </div>
+    <div class="grid search-row">
+      <div class="fld"><label>Supervisor</label><input type="text" id="sup" placeholder="Tu nombre"></div>
+      <div class="fld"><label>Buscar persona</label><input type="search" id="buscar" placeholder="Nombre o DNI…"></div>
+    </div>
   </div>
+
   <div class="chips" id="chips"></div>
-  <div class="tbl" id="tbl"></div>
-  <div class="bar">
-    <button class="btn" id="guardar">Guardar día</button>
-    <button class="btn2" id="todosP">Marcar todos Presente</button>
-    <button class="btn2" id="csv">Descargar Excel</button>
-    <span class="saved" id="saved"></span>
-  </div>
+  <div id="lista"></div>
 </div>
+
+<div class="bar"><div class="inner">
+  <button class="b b-ghost" id="todosP">Todos presentes</button>
+  <button class="b b-alt" id="excel">Excel</button>
+  <button class="b b-main" id="comprobante">Comprobante</button>
+</div></div>
+
+<!-- MODAL -->
+<div class="modal" id="modal"><div class="sheet">
+  <div id="ticket"></div>
+  <div class="mbar">
+    <button class="b b-ghost" id="cerrar">Cerrar</button>
+    <button class="b b-main" id="descImg">Descargar imagen</button>
+  </div>
+</div></div>
+
 <script>
 const PERSONAL = [{"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "45333960", "nom": "Anglas Aliaga Michael", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "47864984", "nom": "Arana Casas Jhack Mishell", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75460404", "nom": "Bonilla Huaman Alexander", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "44009052", "nom": "Bravo Macha Juan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "73787602", "nom": "Dominguez Vallejos Maria Jesùs", "cargo": "Asistente Administrativo"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75082129", "nom": "Malma Gambarini Jorge Luis", "cargo": "Auxiliar Mkp"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "72373698", "nom": "Aguilar Vasquez Fermi Moises", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "22433510", "nom": "Calderon Venancio Eduardo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "42662751", "nom": "Moscoso Valerio Digno Junior", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "77031180", "nom": "Pablo Camones Augusto", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "41717022", "nom": "Ramos Acuña Jose Manuel", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "75490845", "nom": "Rivera Trujillo Abel Aldair", "cargo": "Estibador"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "73095789", "nom": "Aquituari Ahuanari Huanrri", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "44544537", "nom": "Chanchari Valles Oliver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "42967514", "nom": "Chanchari Valles Vidal", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71110155", "nom": "Charpentier Mayanchi Jean Pool", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "47295540", "nom": "Eriberto Segundo Oroche Tamani", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70368464", "nom": "Mayanchi  Alvarado Jhonatan", "cargo": "Operario Inventario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "62598772", "nom": "Montalvan Zambrano Pool Zidane", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70841830", "nom": "Pinchi Cahuaza Andy Adrian", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "74046690", "nom": "Sangama Chanchari Marcelo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "5414399", "nom": "Sangama Noa Marcial", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71142813", "nom": "Suarez Navarro Carlos Antonio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "48175156", "nom": "Zambrano  Balceca  Royer Mayer", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "60326927", "nom": "Delgado Ruiz Jabes Orbin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75019464", "nom": "Farceque Tarrillo Gersin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47412657", "nom": "Isuiza Saavedra Macbride", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47526885", "nom": "Mayan Pizango Gonzalo Carter", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "46593287", "nom": "Valles Pizango Fernando", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75940272", "nom": "Vela Vasquez Jean Pear", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "61342505", "nom": "Oseda  Bardales Luis Miguel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71957337", "nom": "Rubina Davila Jose Jhordan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71784696", "nom": "Vargas Torres Walter Luis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "80313948", "nom": "Amasifuen Paredes Jenner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "45585249", "nom": "Cachique Sangama  Abner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73034921", "nom": "Chavez Tenazoa Natalia", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "47070152", "nom": "Isuiza Tenazoa Fiorella", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75243631", "nom": "Lozano Flores Jhon Alexis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73384354", "nom": "Paima Tenazoa Tony", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "1162606", "nom": "Pezo Ramirez Aldo", "cargo": "Asistente De Inventario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "70653334", "nom": "Ramos Roman Angel Heriberto", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75192135", "nom": "Sanchez Jimenez Deibi", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "954925", "nom": "Tenazoa Ramirez Crower", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47014661", "nom": "Huansi Huanio Reinerio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "77924633", "nom": "Olortegui Faustino Drinder Neyver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47262396", "nom": "Rojas Licla Juan Abel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75453612", "nom": "Huaya Ortiz Ronaldo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75494285", "nom": "Lozano Zumaeta Jhon Gonzalo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "60767190", "nom": "Salas Pizango Christofer", "cargo": "Operario"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "43558789", "nom": "Chavez Blanco Jesus", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "40504777", "nom": "Huaman Quispe Mario", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "80071575", "nom": "Pauccar Cusicuna Sebastian", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Ilo", "dni": "74777691", "nom": "Rodriguez Soto Gianfranco", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4749466", "nom": "Usandivares Cristhian Alberto", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4423556", "nom": "Valencia Salas Justo Benigno", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "73252356", "nom": "Vargas Gamero Sergio Adonae", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "71621902", "nom": "Carrillo Quispe Fernando Florentino", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "48700498", "nom": "Orosco Huamanccari Alexander", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "74575516", "nom": "Quenaya Quenta Jose Anthony Wildor", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "45366841", "nom": "Vizcarra Butron Jose Williams", "cargo": "Operario"}];
-const ESTADOS = ["", "Presente","Tardanza","Falta","Permiso","Vacaciones"];
-const $ = s=>document.querySelector(s);
-const cdSel=$("#cd"), fecha=$("#fecha"), buscar=$("#buscar");
+const ESTADOS = ["","Presente","Tardanza","Falta","Permiso","Vacaciones"];
+const TURNOS = [
+ {l:"06:00 – 14:00",e:"06:00",s:"14:00"},
+ {l:"07:00 – 15:00",e:"07:00",s:"15:00"},
+ {l:"08:00 – 16:00",e:"08:00",s:"16:00"},
+ {l:"14:00 – 22:00",e:"14:00",s:"22:00"},
+ {l:"15:00 – 23:00",e:"15:00",s:"23:00"},
+ {l:"23:00 – 07:00",e:"23:00",s:"07:00"},
+ {l:"22:00 – 06:00",e:"22:00",s:"06:00"},
+ {l:"Otro (editar)",e:"",s:""}
+];
+const CLAVE_SUP = "backus2026";
+const $=s=>document.querySelector(s);
+const cdSel=$("#cd"),fecha=$("#fecha"),buscar=$("#buscar"),sup=$("#sup");
 
-// poblar CDs agrupados por zona
+// CDs agrupados por zona
 const grupos={};
 PERSONAL.forEach(p=>{(grupos[p.zona]=grupos[p.zona]||new Set()).add(p.cd)});
 Object.keys(grupos).sort().forEach(z=>{
-  const og=document.createElement("optgroup"); og.label="Zona "+z;
+  const og=document.createElement("optgroup");og.label="Zona "+z;
   [...grupos[z]].sort().forEach(cd=>{const o=document.createElement("option");o.value=cd;o.textContent=cd;og.appendChild(o)});
   cdSel.appendChild(og);
 });
@@ -95,85 +200,225 @@ fecha.value=new Date().toLocaleDateString("en-CA",{timeZone:"America/Lima"});
 
 function clave(){return "asist_"+cdSel.value+"_"+fecha.value}
 function cargar(){try{return JSON.parse(localStorage.getItem(clave())||"{}")}catch(e){return {}}}
-function guardarAuto(reg){localStorage.setItem(clave(), JSON.stringify(reg))}
-
+function salvar(r){localStorage.setItem(clave(),JSON.stringify(r))}
 let reg={};
+
 function render(){
   reg=cargar();
+  if(localStorage.getItem("supName"))sup.value=localStorage.getItem("supName");
   const q=buscar.value.trim().toLowerCase();
-  const lista=PERSONAL.filter(p=>p.cd===cdSel.value && (!q || p.nom.toLowerCase().includes(q)||p.dni.includes(q)));
-  const tbl=$("#tbl"); tbl.innerHTML="";
-  if(!lista.length){tbl.innerHTML='<div class="empty">No hay personal para mostrar.</div>';pintarChips();return}
-  const head=document.createElement("div");head.className="row head";
-  head.innerHTML='<div>Trabajador</div><div>Estado</div><div>Entrada</div><div>Salida</div>';tbl.appendChild(head);
+  const lista=PERSONAL.filter(p=>p.cd===cdSel.value&&(!q||p.nom.toLowerCase().includes(q)||p.dni.includes(q)));
+  const cont=$("#lista");cont.innerHTML="";
+  if(!lista.length){cont.innerHTML='<div class="empty">No hay personal para mostrar.</div>';chips();return}
   lista.forEach(p=>{
     const d=reg[p.dni]||{};
-    const row=document.createElement("div");row.className="row";
-    const opt=ESTADOS.map(e=>`<option value="${e}" ${d.estado===e?"selected":""}>${e||"— estado —"}</option>`).join("");
-    row.innerHTML=`
-      <div class="col-nm"><div class="nm">${p.nom}</div><div class="sub">${p.cargo} · DNI ${p.dni}</div></div>
-      <div class="col-est"><select class="st-${d.estado||''}" data-dni="${p.dni}" data-k="estado">${opt}</select></div>
-      <div class="col-ent"><input type="time" data-dni="${p.dni}" data-k="entrada" value="${d.entrada||''}"></div>
-      <div class="col-sal"><input type="time" data-dni="${p.dni}" data-k="salida" value="${d.salida||''}"></div>`;
-    tbl.appendChild(row);
+    const est=ESTADOS.map(e=>`<option value="${e}" ${d.estado===e?"selected":""}>${e||"— Estado —"}</option>`).join("");
+    const tur=`<option value="">— Turno —</option>`+TURNOS.map(t=>`<option value="${t.l}" ${d.turno===t.l?"selected":""}>${t.l}</option>`).join("");
+    const otro=(d.turno==="Otro (editar)");
+    const card=document.createElement("div");
+    card.className="emp s-"+(d.estado||"");
+    card.innerHTML=`
+      <div class="emp-top">
+        <div><div class="emp-nm">${p.nom}</div><div class="emp-sub">${p.cargo} · DNI ${p.dni}</div></div>
+      </div>
+      <div class="ctrls">
+        <div><span class="lbl">Estado</span><select data-dni="${p.dni}" data-k="estado">${est}</select></div>
+        <div><span class="lbl">Turno</span><select data-dni="${p.dni}" data-k="turno">${tur}</select></div>
+        <div class="full times ${otro?'':'hide'}" data-times="${p.dni}">
+          <div><span class="lbl">Entrada</span><input type="time" data-dni="${p.dni}" data-k="entrada" value="${d.entrada||''}"></div>
+          <div><span class="lbl">Salida</span><input type="time" data-dni="${p.dni}" data-k="salida" value="${d.salida||''}"></div>
+        </div>
+      </div>
+      <button class="btn-obs" data-obs="${p.dni}">Reportar observación</button>`;
+    cont.appendChild(card);
   });
-  tbl.querySelectorAll("select,input").forEach(el=>el.addEventListener("change",onChange));
-  pintarChips();
+  cont.querySelectorAll("select,input").forEach(el=>el.addEventListener("change",onChange));
+  chips();
 }
+
 function onChange(e){
-  const dni=e.target.dataset.dni,k=e.target.dataset.k;
-  reg[dni]=reg[dni]||{}; reg[dni][k]=e.target.value;
-  if(k==="estado"){e.target.className="st-"+e.target.value}
-  guardarAuto(reg); pintarChips();
-  $("#saved").textContent="Guardado automáticamente ✓";
+  const dni=e.target.dataset.dni,k=e.target.dataset.k,v=e.target.value;
+  reg[dni]=reg[dni]||{};reg[dni][k]=v;
+  if(k==="turno"){
+    const t=TURNOS.find(x=>x.l===v);
+    const box=document.querySelector(`[data-times="${dni}"]`);
+    if(v==="Otro (editar)"){box.classList.remove("hide")}
+    else if(t){box.classList.add("hide");reg[dni].entrada=t.e;reg[dni].salida=t.s}
+    else{box.classList.add("hide")}
+  }
+  if(k==="estado"){
+    const card=e.target.closest(".emp");
+    card.className="emp s-"+v;
+  }
+  salvar(reg);chips();
 }
-function pintarChips(){
+
+function conteo(){
   const total=PERSONAL.filter(p=>p.cd===cdSel.value).length;
   const c={Presente:0,Tardanza:0,Falta:0,Permiso:0,Vacaciones:0};
   Object.values(reg).forEach(d=>{if(d.estado&&c[d.estado]!=null)c[d.estado]++});
-  const marcados=Object.values(c).reduce((a,b)=>a+b,0);
-  $("#chips").innerHTML=
-    `<span class="chip">Total <b>${total}</b></span>`+
-    `<span class="chip c-pre">Presentes <b>${c.Presente}</b></span>`+
-    `<span class="chip c-tar">Tardanzas <b>${c.Tardanza}</b></span>`+
-    `<span class="chip c-fal">Faltas <b>${c.Falta}</b></span>`+
-    `<span class="chip c-per">Permisos <b>${c.Permiso}</b></span>`+
-    `<span class="chip c-vac">Vacaciones <b>${c.Vacaciones}</b></span>`+
-    `<span class="chip">Sin marcar <b>${total-marcados}</b></span>`;
+  const m=Object.values(c).reduce((a,b)=>a+b,0);
+  return {total,c,sin:total-m};
 }
-cdSel.onchange=render; fecha.onchange=render;
-buscar.oninput=render;
-$("#guardar").onclick=()=>{guardarAuto(reg);$("#saved").textContent="Día guardado ✓ ("+fecha.value+")"};
+function chips(){
+  const {total,c,sin}=conteo();
+  $("#chips").innerHTML=
+   `<span class="chip">Total <b>${total}</b></span>`+
+   `<span class="chip"><span class="dot d-pre"></span>Presentes <b>${c.Presente}</b></span>`+
+   `<span class="chip"><span class="dot d-tar"></span>Tardanzas <b>${c.Tardanza}</b></span>`+
+   `<span class="chip"><span class="dot d-fal"></span>Faltas <b>${c.Falta}</b></span>`+
+   `<span class="chip"><span class="dot d-per"></span>Permisos <b>${c.Permiso}</b></span>`+
+   `<span class="chip"><span class="dot d-vac"></span>Vacaciones <b>${c.Vacaciones}</b></span>`+
+   `<span class="chip"><span class="dot d-sin"></span>Sin marcar <b>${sin}</b></span>`;
+}
+
+cdSel.onchange=render;fecha.onchange=render;buscar.oninput=render;
+sup.oninput=()=>localStorage.setItem("supName",sup.value);
+
 $("#todosP").onclick=()=>{
   PERSONAL.filter(p=>p.cd===cdSel.value).forEach(p=>{reg[p.dni]=reg[p.dni]||{};if(!reg[p.dni].estado)reg[p.dni].estado="Presente"});
-  guardarAuto(reg);render();$("#saved").textContent="Todos marcados Presente ✓";
+  salvar(reg);render();
 };
-$("#csv").onclick=()=>{
+
+$("#excel").onclick=()=>{
   const lista=PERSONAL.filter(p=>p.cd===cdSel.value);
-  const filas=[["Fecha","Centro de costo","CD","DNI","Nombre","Cargo","Estado","Entrada","Salida"]];
-  lista.forEach(p=>{const d=reg[p.dni]||{};
-    filas.push([fecha.value,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.entrada||"",d.salida||""])});
+  const filas=[["Fecha","Centro de costo","CD","DNI","Nombre","Cargo","Estado","Turno","Entrada","Salida","Supervisor"]];
+  lista.forEach(p=>{const d=reg[p.dni]||{};filas.push([fecha.value,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.turno||"",d.entrada||"",d.salida||"",sup.value||""])});
   const nombre="Asistencia_"+cdSel.value+"_"+fecha.value;
   if(window.XLSX){
     const ws=XLSX.utils.aoa_to_sheet(filas);
-    ws["!cols"]=[{wch:11},{wch:20},{wch:16},{wch:11},{wch:30},{wch:22},{wch:12},{wch:9},{wch:9}];
-    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Asistencia");
-    XLSX.writeFile(wb,nombre+".xlsx");
+    ws["!cols"]=[{wch:11},{wch:20},{wch:15},{wch:11},{wch:30},{wch:22},{wch:12},{wch:14},{wch:9},{wch:9},{wch:18}];
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Asistencia");XLSX.writeFile(wb,nombre+".xlsx");
   }else{
     let csv="";filas.forEach(r=>{csv+=r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(",")+"\n"});
-    const b=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+    const b=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"});
     const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=nombre+".csv";a.click();
   }
 };
 
-// ----- Clave de acceso -----
-const CLAVE_SUP="backus2026";
-const lock=document.getElementById("lock");
+// ---- Comprobante ----
+$("#comprobante").onclick=()=>{
+  const {total,c,sin}=conteo();
+  const f=fecha.value.split("-").reverse().join("/");
+  const p0=PERSONAL.find(p=>p.cd===cdSel.value)||{};
+  $("#ticket").innerHTML=`
+    <div class="tk-h"><svg viewBox="0 0 300 92" width="96" height="30" aria-label="Lavoro"><rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EC3237"/><rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A85A"/><text x="0" y="70" font-family="Nunito,Verdana,sans-serif" font-size="78" font-weight="800" fill="#0F63AC" letter-spacing="-1">Lavoro</text></svg><div><h3>Comprobante de Asistencia</h3><p>${p0.zona||""}</p></div></div>
+    <div class="tk-meta"><b>CD:</b> ${cdSel.value}<br><b>Fecha:</b> ${f}<br>${sup.value?('<b>Supervisor:</b> '+sup.value+'<br>'):''}<b>Total personal:</b> ${total}</div>
+    <div class="tk-grid">
+      <div class="tk-cell"><div class="n" style="color:#00A85A">${c.Presente}</div><div class="l">Presentes</div></div>
+      <div class="tk-cell"><div class="n" style="color:#E8A000">${c.Tardanza}</div><div class="l">Tardanzas</div></div>
+      <div class="tk-cell"><div class="n" style="color:#EC3237">${c.Falta}</div><div class="l">Faltas</div></div>
+      <div class="tk-cell"><div class="n" style="color:#6A5BDF">${c.Permiso}</div><div class="l">Permisos</div></div>
+      <div class="tk-cell"><div class="n" style="color:#0C86C4">${c.Vacaciones}</div><div class="l">Vacac.</div></div>
+      <div class="tk-cell"><div class="n" style="color:#98A2B3">${sin}</div><div class="l">Sin marcar</div></div>
+    </div>
+    <div class="tk-ltit">Detalle del personal</div>
+    <div class="tk-list">${PERSONAL.filter(p=>p.cd===cdSel.value).map(p=>{const d=reg[p.dni]||{};const hr=(d.entrada||d.salida)?((d.entrada||"--")+" – "+(d.salida||"--")):"";return `<div class="tk-row"><div><div class="nm">${p.nom}</div><div class="cg">${p.cargo}</div></div><div class="hr">${hr||"—"}<span class="es">${d.estado||"sin marcar"}</span></div></div>`}).join("")}</div>
+    <div class="tk-foot">Generado el ${new Date().toLocaleString("es-PE",{timeZone:"America/Lima"})} · Lavoro</div>`;
+  $("#modal").classList.add("on");
+};
+$("#cerrar").onclick=()=>$("#modal").classList.remove("on");
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")$("#modal").classList.remove("on")});
+$("#descImg").onclick=()=>{
+  if(!window.html2canvas){alert("Toma una captura de pantalla para compartir.");return}
+  html2canvas($("#ticket"),{scale:2,backgroundColor:"#ffffff"}).then(cv=>{
+    const a=document.createElement("a");a.href=cv.toDataURL("image/png");
+    a.download="Comprobante_"+cdSel.value+"_"+fecha.value+".png";a.click();
+  });
+};
+
+// ---- Login ----
+const lock=$("#lock");
 function abrir(){lock.style.display="none";try{sessionStorage.setItem("okAsist","1")}catch(e){}}
-if(sessionStorage.getItem("okAsist")==="1"){abrir()}
-document.getElementById("entrar").onclick=()=>{if(document.getElementById("pwd").value===CLAVE_SUP){abrir()}else{document.getElementById("err").textContent="Clave incorrecta"}};
-document.getElementById("pwd").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("entrar").click()});
+if(sessionStorage.getItem("okAsist")==="1")abrir();
+$("#entrar").onclick=()=>{if($("#pwd").value===CLAVE_SUP)abrir();else $("#err").textContent="Clave incorrecta"};
+$("#pwd").addEventListener("keydown",e=>{if(e.key==="Enter")$("#entrar").click()});
+
+// ---- Service worker (PWA) ----
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+
+// ---- Reportar observacion ----
+let obsP=null, obsFiles=[];
+function obsMsg(){
+  const f=($("#obsFecha").value||"").split("-").reverse().join("/");
+  const lineas=[
+    "*REPORTE DE OBSERVACIÓN*",
+    "APELLIDOS Y NOMBRES: "+(obsP?obsP.nom:""),
+    "DNI: "+(obsP?obsP.dni:""),
+    "CENTRO DE COSTO: "+(obsP?obsP.zona:""),
+    "CD: "+(obsP?obsP.cd:""),
+    "DÍA OBSERVADO: "+f,
+    "HORAS LABORADAS: "+($("#obsHoras").value||"-"),
+    "ÁREA DE TRABAJO: "+($("#obsArea").value||"-"),
+    "MOTIVO: "+($("#obsMotivo").value||"-"),
+  ];
+  const nota=$("#obsNota").value.trim(); if(nota)lineas.push("OBSERVACIÓN: "+nota);
+  lineas.push("EVIDENCIA: "+(obsFiles.length?obsFiles.length+" foto(s) adjunta(s)":"sin adjunto"));
+  if(sup.value)lineas.push("REPORTA: "+sup.value);
+  return lineas.join("\n");
+}
+function obsRefresh(){$("#obsPrev").textContent=obsMsg()}
+function obsThumbs(){
+  const box=$("#obsThumbs");box.innerHTML="";
+  obsFiles.forEach((f,i)=>{
+    const url=URL.createObjectURL(f);
+    const d=document.createElement("div");d.className="thumb";
+    d.innerHTML=`<img src="${url}"><button class="rm" data-i="${i}">&times;</button>`;
+    box.appendChild(d);
+  });
+  box.querySelectorAll(".rm").forEach(b=>b.onclick=()=>{obsFiles.splice(+b.dataset.i,1);obsThumbs();obsRefresh()});
+}
+function abrirObs(dni){
+  obsP=PERSONAL.find(p=>p.dni===dni);obsFiles=[];
+  $("#obsPers").textContent=obsP.nom+" · "+obsP.cargo;
+  $("#obsFecha").value=fecha.value;
+  const d=reg[dni]||{};
+  $("#obsHoras").value="";$("#obsArea").value=obsP.cargo;$("#obsMotivo").value="";$("#obsNota").value="";
+  obsThumbs();obsRefresh();
+  $("#obsModal").classList.add("on");
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-obs]");if(b)abrirObs(b.dataset.obs)});
+["obsFecha","obsHoras","obsArea","obsMotivo","obsNota"].forEach(id=>document.getElementById(id).addEventListener("input",obsRefresh));
+function addFiles(list){[...list].forEach(f=>obsFiles.push(f));obsThumbs();obsRefresh()}
+$("#obsCam").onchange=e=>addFiles(e.target.files);
+$("#obsGal").onchange=e=>addFiles(e.target.files);
+$("#obsX").onclick=()=>$("#obsModal").classList.remove("on");
+$("#obsModal").addEventListener("click",e=>{if(e.target.id==="obsModal")$("#obsModal").classList.remove("on")});
+$("#obsCopy").onclick=async()=>{try{await navigator.clipboard.writeText(obsMsg());$("#obsCopy").textContent="Copiado ✓";setTimeout(()=>$("#obsCopy").textContent="Copiar mensaje",1500)}catch(e){alert("Copia manual:\n\n"+obsMsg())}};
+$("#obsWA").onclick=async()=>{
+  const texto=obsMsg();
+  if(obsFiles.length && navigator.canShare && navigator.canShare({files:obsFiles})){
+    try{await navigator.share({files:obsFiles,text:texto,title:"Reporte de observación"});return}catch(e){if(e&&e.name==="AbortError")return}
+  }
+  window.open("https://wa.me/?text="+encodeURIComponent(texto),"_blank");
+};
+
 render();
 </script>
+<div class="om" id="obsModal"><div class="card">
+  <div class="hd2"><div><h3>Reportar una observación</h3><p id="obsPers"></p></div><button class="x" id="obsX">&times;</button></div>
+  <div class="body">
+    <div class="warn"><b>Importante</b><br>Si no figura la marcación en el BIOMÉTRICO no se procederá a la corrección. Recuerda marcar INGRESO y SALIDA.</div>
+    <div class="f"><label>Día observado</label><input type="date" id="obsFecha"></div>
+    <div class="f"><label>Horas laboradas</label><input type="text" id="obsHoras" placeholder="8"></div>
+    <div class="f"><label>Área de trabajo</label><input type="text" id="obsArea" placeholder="Picking, sorting…"></div>
+    <div class="f"><label>Motivo</label><select id="obsMotivo">
+      <option value="">— Selecciona —</option>
+      <option>Descanso médico</option><option>Cita médica</option>
+      <option>Dolor de estómago</option><option>Dolor de cuerpo</option>
+      <option>Problema familiar</option><option>Permiso</option><option>Otro</option></select></div>
+    <div class="f"><label>Observación</label><textarea id="obsNota" placeholder="Describe lo sucedido…"></textarea></div>
+    <div class="f"><label>Evidencia (foto)</label>
+      <div class="ph-btns">
+        <label><span>📷 Tomar foto</span><input type="file" accept="image/*" capture="environment" id="obsCam" hidden></label>
+        <label><span>🖼️ Galería</span><input type="file" accept="image/*" multiple id="obsGal" hidden></label>
+      </div>
+      <div class="thumbs" id="obsThumbs"></div>
+    </div>
+    <div class="f"><label>Así se enviará</label><div class="prev" id="obsPrev"></div></div>
+    <div class="send"><button class="b-wa" id="obsWA">Enviar por WhatsApp</button><button class="b-cp" id="obsCopy">Copiar mensaje</button></div>
+    <div class="note">Se abrirá WhatsApp con el mensaje listo: elige el grupo o contacto y envíalo. Si adjuntaste fotos, en el celular se envían junto con el mensaje; en computadora tendrás que adjuntarlas en el chat.</div>
+  </div>
+</div></div>
 </body>
 </html>
