@@ -144,6 +144,26 @@ table.tb td{padding:9px 8px;border-bottom:1px solid var(--line)}
 .tk-row{display:grid;grid-template-columns:1fr auto;gap:8px;padding:6px 2px;border-bottom:1px solid #eef2f7;font-size:12px}
 .tk-row .nm{font-weight:600}.tk-row .cg{font-size:10px;color:var(--mut)}.tk-row .hr{text-align:right;font-weight:600}.tk-row .es{font-size:10px;color:var(--mut);display:block}
 .tk-foot{font-size:11px;color:var(--mut);text-align:center;border-top:1px dashed var(--line);padding-top:10px;margin-top:6px}
+.navgrp{color:#7fa8cf;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:12px 13px 5px}
+.cctabs{display:flex;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;margin-bottom:14px;box-shadow:var(--sh)}
+.cctab{flex:1;text-align:center;padding:11px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;color:var(--mut)}
+.cctab.act{background:var(--azul);color:#fff}
+.wkbar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:14px;box-shadow:var(--sh)}
+.wkbar b{font-size:15px;color:var(--azul)}
+.wkbar button{border:1px solid var(--line);background:#fff;border-radius:9px;width:38px;height:38px;font-size:16px;cursor:pointer}
+.wkbar input[type=date]{width:auto;flex:1;min-width:120px}
+.progtbl{width:100%;border-collapse:collapse;font-size:12px}
+.progtbl th{background:#eef3f9;color:var(--mut);font-weight:700;font-size:11px;padding:8px 6px;border:1px solid var(--line);white-space:nowrap;position:sticky;top:0}
+.progtbl td{border:1px solid var(--line);padding:4px 6px;white-space:nowrap}
+.progtbl td.id{position:sticky;left:0;background:#fff}
+.tsel{border:none;border-radius:6px;font-size:11px;font-weight:700;padding:6px 4px;width:100%;cursor:pointer;text-align:center}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:var(--sh)}
+.pcard .nm{font-weight:700;font-size:14px}.pcard .sub{font-size:12px;color:var(--mut);margin-bottom:8px}
+.pday{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin-bottom:6px}
+.pday label{font-size:12px;color:var(--mut);font-weight:600}
+.leyenda{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.leyenda span{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px}
+.ot{background:#e7f6ec;color:#0a6b33;font-weight:700;font-size:12px;padding:3px 9px;border-radius:999px}
 /* RESPONSIVE */
 @media(max-width:860px){
   .side{display:none}.main{margin-left:0;padding-bottom:76px}
@@ -156,6 +176,39 @@ table.tb td{padding:9px 8px;border-bottom:1px solid var(--line)}
   .bn.act{color:var(--azul)}
 }
 @media(min-width:861px){.mobonly{display:none!important}}
+
+/* ===== PULIDO MÓVIL ===== */
+@media(max-width:860px){
+  html,body{overflow-x:hidden;max-width:100vw}
+  .topbar{padding:10px 12px;gap:8px}
+  .topbar .logo{flex:1;justify-content:flex-start;padding:0}
+  .topbar .logo svg{width:106px;height:33px}
+  .fbstat{font-size:0;padding:9px;gap:0}
+  .fbstat .pt{width:11px;height:11px}
+  .view{padding:12px 12px 24px}
+  .filters{flex-direction:column;gap:10px;padding:13px}
+  .fld{min-width:0;width:100%}
+  .kpis{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi{padding:11px 12px}.kpi .ico{width:38px;height:38px;font-size:18px}.kpi .n{font-size:19px}.kpi .l{font-size:11px}
+  .row2{gap:12px}.panelbox{padding:13px}
+  .card{padding:15px;border-radius:16px}
+  .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .toolbar .btn,.toolbar button{width:100%}
+  .btn,.b-main,.b-alt,.b-ghost,.b-wa,.b-ok{min-height:48px;border-radius:12px}
+  select,input,textarea,.tsel{font-size:16px!important}
+  .cctabs{padding:5px;gap:5px}.cctab{padding:11px 4px;font-size:13px}
+  .wkbar{flex-wrap:wrap;padding:11px;gap:9px}
+  .wkbar button{order:1;width:44px;height:44px}
+  .wkbar input[type=date]{order:2;flex:1 1 60%}
+  .wkbar #progWk{order:5;flex:1 1 100%;text-align:center;font-size:14px}
+  .wkbar #progSede{order:6;flex:1 1 100%;width:100%}
+  table.tb{min-width:540px}
+  .chip{font-size:13px;padding:8px 13px}
+  .om{padding:10px}.om .mc{border-radius:16px}
+  .emp{padding:15px;border-radius:16px}
+  .listrow{padding:13px}
+  h1{font-size:19px}
+}
 </style>
 </head>
 <body>
@@ -198,6 +251,31 @@ table.tb td{padding:9px 8px;border-bottom:1px solid var(--line)}
       </div>
       <div class="panelbox"><h3>📊 Asistencia por centro de distribución</h3><div style="overflow:auto"><table class="tb" id="pTabla"></table></div></div>
       <div class="panelbox"><h3>🔔 Alertas y seguimiento</h3><div id="pAlertas"></div></div>
+    </section>
+
+    <!-- PROGRAMACION -->
+    <section class="view" id="v-prog">
+      <div class="cctabs" id="ccTabs"></div>
+      <div class="wkbar">
+        <button id="wkPrev">‹</button>
+        <input type="date" id="wkDate">
+        <button id="wkNext">›</button>
+        <b id="progWk" style="flex:1;text-align:center"></b>
+        <select id="progSede" style="width:auto;flex:1;min-width:120px"><option value="">Todas las sedes</option></select>
+      </div>
+      <div class="kpis" id="progKpis"></div>
+      <div class="toolbar">
+        <button class="btn b-alt" id="progImportBtn">⬆️ Importar Excel</button>
+        <input type="file" id="progFile" accept=".xlsx,.xls" style="display:none">
+        <button class="btn b-alt" id="progExport">⬇️ Exportar Excel</button>
+        <button class="btn b-ghost" id="progCopy">Copiar semana anterior</button>
+        <button class="btn b-alt" id="progComp">🧾 Comprobante</button>
+        <button class="btn b-wa" id="progWA">WhatsApp</button>
+        <button class="btn b-main" id="progSave">Guardar programación</button>
+      </div>
+      <div class="leyenda" id="progLeyenda"></div>
+      <div class="panelbox deskonly" style="overflow:auto;padding:0"><table class="progtbl" id="progTabla"></table></div>
+      <div class="mobonly" id="progCards"></div>
     </section>
 
     <!-- ASISTENCIA -->
@@ -264,6 +342,7 @@ table.tb td{padding:9px 8px;border-bottom:1px solid var(--line)}
     <!-- PERSONAL -->
     <section class="view" id="v-personal">
       <div class="kpis" id="peKpis"></div>
+      <div class="card" id="peImportCard" style="display:none"><h3>⬆️ Actualizar lista desde Excel</h3><p style="color:var(--mut);font-size:13px;margin-bottom:12px">Sube tu HEADCOUNT (.xlsx). Reemplaza la lista de personal (solo Oriente y Sur). <b>No modifica el historial de asistencias.</b></p><input type="file" accept=".xlsx,.xls" id="peFile" class="fileinput"><button class="btn b-main" id="peImport" style="margin-top:10px;width:100%">Importar y actualizar personal</button></div>
       <div class="filters">
         <div class="fld"><label>Buscar</label><input type="search" id="peBuscar" placeholder="Nombre o DNI…"></div>
         <div class="fld"><label>Zona</label><select id="peZona"><option value="">Todas</option><option>ORIENTE</option><option>SUR</option></select></div>
@@ -311,7 +390,7 @@ table.tb td{padding:9px 8px;border-bottom:1px solid var(--line)}
 <!-- MODAL COMPROBANTE -->
 <div class="om" id="mComp"><div class="mc">
   <div id="ticket" style="padding:22px;background:linear-gradient(160deg,#fff,#f4f8fd)"></div>
-  <div class="mb rowbtn"><button class="btn b-ghost" id="compClose">Cerrar</button><button class="btn b-main" id="compImg">Descargar imagen</button></div>
+  <div class="mb" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn b-ghost" id="compClose" style="flex:1">Cerrar</button><button class="btn b-alt" id="compImg" style="flex:1">Descargar</button><button class="btn b-wa" id="compWA" style="flex:1">Compartir WhatsApp</button></div>
 </div></div>
 
 <!-- MODAL OBSERVACION (desde asistencia) -->
@@ -329,7 +408,7 @@ table.tb td{padding:9px 8px;border-bottom:1px solid var(--line)}
 </div></div>
 
 <script>
-const PERSONAL = [{"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "45333960", "nom": "Anglas Aliaga Michael", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "47864984", "nom": "Arana Casas Jhack Mishell", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75460404", "nom": "Bonilla Huaman Alexander", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "44009052", "nom": "Bravo Macha Juan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "73787602", "nom": "Dominguez Vallejos Maria Jesùs", "cargo": "Asistente Administrativo"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75082129", "nom": "Malma Gambarini Jorge Luis", "cargo": "Auxiliar Mkp"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "72373698", "nom": "Aguilar Vasquez Fermi Moises", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "22433510", "nom": "Calderon Venancio Eduardo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "42662751", "nom": "Moscoso Valerio Digno Junior", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "77031180", "nom": "Pablo Camones Augusto", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "41717022", "nom": "Ramos Acuña Jose Manuel", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "75490845", "nom": "Rivera Trujillo Abel Aldair", "cargo": "Estibador"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "73095789", "nom": "Aquituari Ahuanari Huanrri", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "44544537", "nom": "Chanchari Valles Oliver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "42967514", "nom": "Chanchari Valles Vidal", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71110155", "nom": "Charpentier Mayanchi Jean Pool", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "47295540", "nom": "Eriberto Segundo Oroche Tamani", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70368464", "nom": "Mayanchi  Alvarado Jhonatan", "cargo": "Operario Inventario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "62598772", "nom": "Montalvan Zambrano Pool Zidane", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70841830", "nom": "Pinchi Cahuaza Andy Adrian", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "74046690", "nom": "Sangama Chanchari Marcelo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "5414399", "nom": "Sangama Noa Marcial", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71142813", "nom": "Suarez Navarro Carlos Antonio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "48175156", "nom": "Zambrano  Balceca  Royer Mayer", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "60326927", "nom": "Delgado Ruiz Jabes Orbin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75019464", "nom": "Farceque Tarrillo Gersin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47412657", "nom": "Isuiza Saavedra Macbride", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47526885", "nom": "Mayan Pizango Gonzalo Carter", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "46593287", "nom": "Valles Pizango Fernando", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75940272", "nom": "Vela Vasquez Jean Pear", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "61342505", "nom": "Oseda  Bardales Luis Miguel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71957337", "nom": "Rubina Davila Jose Jhordan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71784696", "nom": "Vargas Torres Walter Luis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "80313948", "nom": "Amasifuen Paredes Jenner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "45585249", "nom": "Cachique Sangama  Abner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73034921", "nom": "Chavez Tenazoa Natalia", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "47070152", "nom": "Isuiza Tenazoa Fiorella", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75243631", "nom": "Lozano Flores Jhon Alexis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73384354", "nom": "Paima Tenazoa Tony", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "1162606", "nom": "Pezo Ramirez Aldo", "cargo": "Asistente De Inventario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "70653334", "nom": "Ramos Roman Angel Heriberto", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75192135", "nom": "Sanchez Jimenez Deibi", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "954925", "nom": "Tenazoa Ramirez Crower", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47014661", "nom": "Huansi Huanio Reinerio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "77924633", "nom": "Olortegui Faustino Drinder Neyver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47262396", "nom": "Rojas Licla Juan Abel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75453612", "nom": "Huaya Ortiz Ronaldo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75494285", "nom": "Lozano Zumaeta Jhon Gonzalo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "60767190", "nom": "Salas Pizango Christofer", "cargo": "Operario"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "43558789", "nom": "Chavez Blanco Jesus", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "40504777", "nom": "Huaman Quispe Mario", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "80071575", "nom": "Pauccar Cusicuna Sebastian", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Ilo", "dni": "74777691", "nom": "Rodriguez Soto Gianfranco", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4749466", "nom": "Usandivares Cristhian Alberto", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4423556", "nom": "Valencia Salas Justo Benigno", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "73252356", "nom": "Vargas Gamero Sergio Adonae", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "71621902", "nom": "Carrillo Quispe Fernando Florentino", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "48700498", "nom": "Orosco Huamanccari Alexander", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "74575516", "nom": "Quenaya Quenta Jose Anthony Wildor", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "45366841", "nom": "Vizcarra Butron Jose Williams", "cargo": "Operario"}];
+const PERSONAL = [{"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "45333960", "nom": "Anglas Aliaga Michael", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "47864984", "nom": "Arana Casas Jhack Mishell", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "44009052", "nom": "Bravo Macha Juan", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "73787602", "nom": "Dominguez Vallejos Maria Jesùs", "cargo": "Asistente Administrativo"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75082129", "nom": "Malma Gambarini Jorge Luis", "cargo": "Auxiliar Mkp"}, {"zona": "ORIENTE", "cd": "Chanchamayo", "dni": "75673437", "nom": "Tanz Sanchez Marco Antonio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "72373698", "nom": "Aguilar Vasquez Fermi Moises", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "22433510", "nom": "Calderon Venancio Eduardo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "42662751", "nom": "Moscoso Valerio Digno Junior", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "77031180", "nom": "Pablo Camones Augusto", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Huanuco", "dni": "41717022", "nom": "Ramos Acuña Jose Manuel", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "73095789", "nom": "Aquituari Ahuanari Huanrri", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "44544537", "nom": "Chanchari Valles Oliver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "42967514", "nom": "Chanchari Valles Vidal", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71110155", "nom": "Charpentier Mayanchi Jean Pool", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70368464", "nom": "Mayanchi  Alvarado Jhonatan", "cargo": "Asistente De Mkp"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "62598772", "nom": "Montalvan Zambrano Pool Zidane", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "70841830", "nom": "Pinchi Cahuaza Andy Adrian", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "74046690", "nom": "Sangama Chanchari Marcelo", "cargo": "Operario De Inventario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "5414399", "nom": "Sangama Noa Marcial", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "71142813", "nom": "Suarez Navarro Carlos Antonio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Iquitos", "dni": "48175156", "nom": "Zambrano  Balceca  Royer Mayer", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "60326927", "nom": "Delgado Ruiz Jabes Orbin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75019464", "nom": "Farceque Tarrillo Gersin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "6740831", "nom": "Figueredo Avila Rosbert Daniel", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47412657", "nom": "Isuiza Saavedra Macbride", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "47526885", "nom": "Mayan Pizango Gonzalo Carter", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "46593287", "nom": "Valles Pizango Fernando", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Moyobamba", "dni": "75940272", "nom": "Vela Vasquez Jean Pear", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "48844728", "nom": "Cabrera Aysana Wilmer", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "10627126", "nom": "Palpa Meza Percy Pablo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71957337", "nom": "Rubina Davila Jose Jhordan", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Satipo", "dni": "71784696", "nom": "Vargas Torres Walter Luis", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "80313948", "nom": "Amasifuen Paredes Jenner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "45585249", "nom": "Cachique Sangama  Abner", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "47070152", "nom": "Isuiza Tenazoa Fiorella", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "61511897", "nom": "Paima Tenazoa Renato", "cargo": "Asistente De Inventario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "73384354", "nom": "Paima Tenazoa Tony", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "71217579", "nom": "Panduro Melendez Franklin", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "1162606", "nom": "Pezo Ramirez Aldo", "cargo": "Estibador"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "70653334", "nom": "Ramos Roman Angel Heriberto", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "75192135", "nom": "Sanchez Jimenez Deibi", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tarapoto", "dni": "954925", "nom": "Tenazoa Ramirez Crower", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "74981759", "nom": "Frangel Darwin Huanca Espinoza", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47014661", "nom": "Huansi Huanio Reinerio", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "77924633", "nom": "Olortegui Faustino Drinder Neyver", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Tingo Maria", "dni": "47262396", "nom": "Rojas Licla Juan Abel", "cargo": "Lider De Operaciones"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "73118794", "nom": "Chavez Piña Rolan Arnold", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "48284862", "nom": "Hens Hendry Pipa Bicerra", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75453612", "nom": "Huaya Ortiz Ronaldo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "75494285", "nom": "Lozano Zumaeta Jhon Gonzalo", "cargo": "Operario"}, {"zona": "ORIENTE", "cd": "Yurimaguas", "dni": "60767190", "nom": "Salas Pizango Christofer", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "43558789", "nom": "Chavez Blanco Jesus", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "40504777", "nom": "Huaman Quispe Mario", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "42094214", "nom": "Lasteros Guevara Walter", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Aguas Calientes", "dni": "80071575", "nom": "Pauccar Cusicuna Sebastian", "cargo": "Estibador"}, {"zona": "SUR", "cd": "Ilo", "dni": "75550196", "nom": "Champi Lucra Luis Enrique", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "47493621", "nom": "Loayza Mejia Joseph Angel", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Ilo", "dni": "47611625", "nom": "Minaya Calderon Arquimedes Freddy", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "74777691", "nom": "Rodriguez Soto Gianfranco", "cargo": "Operario"}, {"zona": "SUR", "cd": "Ilo", "dni": "4749466", "nom": "Usandivares Cristhian Alberto", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "71621902", "nom": "Carrillo Quispe Fernando Florentino", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "48700498", "nom": "Orosco Huamanccari Alexander", "cargo": "Lider De Operaciones"}, {"zona": "SUR", "cd": "Tacna", "dni": "74575516", "nom": "Quenaya Quenta Jose Anthony Wildor", "cargo": "Operario"}, {"zona": "SUR", "cd": "Tacna", "dni": "45366841", "nom": "Vizcarra Butron Jose Williams", "cargo": "Operario"}];
 const $=s=>document.querySelector(s);
 const ESTADOS=["","Presente","Tardanza","Falta","Permiso","Vacaciones"];
 const TURNOS=[{l:"06:00 – 14:00",e:"06:00",s:"14:00"},{l:"07:00 – 15:00",e:"07:00",s:"15:00"},{l:"08:00 – 16:00",e:"08:00",s:"16:00"},{l:"14:00 – 22:00",e:"14:00",s:"22:00"},{l:"15:00 – 23:00",e:"15:00",s:"23:00"},{l:"23:00 – 07:00",e:"23:00",s:"07:00"},{l:"22:00 – 06:00",e:"22:00",s:"06:00"},{l:"Otro (editar)",e:"",s:""}];
@@ -343,9 +422,9 @@ function userKey(n){return n.toLowerCase().replace(/[.#$\/\[\]\s]/g,"_")}
 // ---- Firebase ----
 const firebaseConfig={apiKey:"AIzaSyDBDavzuMhHqflyxo5lW7xV2eJd8N97H-w",authDomain:"asistencia-backus.firebaseapp.com",databaseURL:"https://asistencia-backus-default-rtdb.firebaseio.com",projectId:"asistencia-backus",storageBucket:"asistencia-backus.firebasestorage.app",messagingSenderId:"132968950299",appId:"1:132968950299:web:b855c8623c3227219e66be"};
 let db=null;
-const DB={asistencias:{},ausencias:{},extras:{},observaciones:{},usuarios:{},personalOv:{}};
+const DB={asistencias:{},ausencias:{},extras:{},observaciones:{},usuarios:{},personalOv:{},roster:{},prog:{}};
 try{firebase.initializeApp(firebaseConfig);db=firebase.database();
-  ["asistencias","ausencias","extras","observaciones","usuarios","personalOv"].forEach(n=>{
+  ["asistencias","ausencias","extras","observaciones","usuarios","personalOv","roster","prog"].forEach(n=>{
     db.ref(n).on("value",async s=>{DB[n]=s.val()||{};onData(n);});
   });
   db.ref(".info/connected").on("value",s=>{const on=s.val()===true;$("#fbStat").className="fbstat"+(on?"":" off");$("#fbStat").innerHTML='<span class="pt"></span>Firebase: '+(on?"Conectado":"Sin conexión");});
@@ -353,36 +432,61 @@ try{firebase.initializeApp(firebaseConfig);db=firebase.database();
 
 function onData(n){
   if(n==="usuarios"){seedAdmin();if(view==="usuarios")renderUsuarios();}
-  if(n==="personalOv"){/* recompute */}
+  if(n==="personalOv"||n==="roster"){if(currentUser){try{fillSelects()}catch(e){}if(view==="personal")renderPersonal();if(view==="asistencia"&&!dirty)renderAsist();if(view==="panel")renderPanel();}}
   if(!currentUser)return;
   if(n==="asistencias"){if(view==="asistencia"&&!dirty)renderAsist();if(view==="panel")renderPanel();if(view==="extras")renderExtras();}
   if(n==="ausencias"&&view==="ausencias")renderAuList();
   if(n==="extras"&&view==="extras")renderExtras();
   if(n==="observaciones"&&view==="obs")renderObList();
+  if(n==="prog"&&view==="prog"){loadSched();renderProg();}
   if(n==="personalOv"&&view==="personal")renderPersonal();
 }
 
 // ---- Personal efectivo (con overrides) ----
-function personalActivo(){return PERSONAL.map(p=>{const ov=DB.personalOv[p.dni]||{};return Object.assign({},p,ov)}).filter(p=>p.estado!=="Inactivo")}
+function rosterVals(){return (DB.roster&&Object.keys(DB.roster).length)?Object.values(DB.roster):PERSONAL}
+function personalActivo(){return rosterVals().map(p=>{const ov=DB.personalOv[p.dni]||{};return Object.assign({},p,ov)}).filter(p=>p.estado!=="Inactivo")}
+function allKnownByCD(cd){const m={};PERSONAL.forEach(p=>{if(p.cd===cd)m[p.dni]=p});rosterVals().forEach(p=>{if(p.cd===cd)m[p.dni]=p});return Object.values(m)}
+function titleCase(s){return (s||"").toLowerCase().replace(/(^|\s|\/)([a-záéíóúñ])/g,(m,a,b)=>a+b.toUpperCase())}
+function importarExcel(file){
+  const rd=new FileReader();
+  rd.onload=ev=>{try{
+    const wb=XLSX.read(ev.target.result,{type:"array"});
+    const ws=wb.Sheets["CDS"]||wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1});
+    let hr=rows.findIndex(r=>r&&r.some(c=>String(c||"").toUpperCase().includes("DNI")));
+    if(hr<0){alert("No encontré los encabezados (DNI, APELLIDOS…). Revisa el archivo.");return;}
+    const head=rows[hr].map(c=>String(c||"").toUpperCase().trim());
+    const col=k=>head.findIndex(h=>h.includes(k));
+    const ccI=col("CENTRO DE COSTO"),cdI=col("CENTRO DE DISTRIBU"),dniI=col("DNI"),nomI=col("APELLIDOS"),carI=col("CARGO");
+    const keep=["BACKUS LOG ORIENTE","BACKUS LOG CD SUR"];
+    const roster={};let n=0;
+    for(let i=hr+1;i<rows.length;i++){const r=rows[i];if(!r)continue;const cc=String(r[ccI]||"").trim().toUpperCase();if(!keep.includes(cc))continue;const nom=r[nomI];if(!nom)continue;let dni=String(r[dniI]||"").replace(/[^0-9]/g,"")||String(r[dniI]||"").trim();if(!dni)continue;const zona=cc.replace("BACKUS LOG ","").replace("CD ","").trim();roster[dni]={zona,cd:titleCase(String(r[cdI]||"").trim()),dni,nom:titleCase(String(nom).trim()),cargo:titleCase(String(r[carI]||"").trim())};n++;}
+    if(!n){alert("No encontré trabajadores de Oriente/Sur en el archivo.");return;}
+    if(!confirm("Se actualizará la lista a "+n+" trabajadores (Oriente y Sur).\nEl historial de asistencias NO se modifica.\n\n¿Continuar?"))return;
+    db.ref("roster").set(roster).then(()=>alert("Lista actualizada: "+n+" trabajadores ✓"));
+  }catch(err){alert("No pude leer el Excel: "+err.message);}};
+  rd.readAsArrayBuffer(file);
+}
 function todosCDs(){const o=[],seen={};personalActivo().forEach(p=>{if(!seen[p.cd]){seen[p.cd]=1;o.push({cd:p.cd,zona:p.zona})}});return o.sort((a,b)=>(a.zona+a.cd).localeCompare(b.zona+b.cd))}
 function cdsPermitidos(){if(currentUser&&currentUser.rol==="lider"&&currentUser.cd)return [currentUser.cd];return todosCDs().map(c=>c.cd)}
 
 // ---- NAV ----
 const MENU=[
- {id:"panel",ic:"🏠",t:"Panel General",sub:"Control de asistencia y gestión de personal"},
- {id:"asistencia",ic:"🗓️",t:"Registro de Asistencia",sub:"Control diario de ingreso, salida y estado"},
- {id:"ausencias",ic:"➕",t:"Ausencias y Descansos médicos",sub:"Control preventivo de ausencias"},
- {id:"extras",ic:"⏱️",t:"Horas Extras",sub:"Gestión de tiempo adicional"},
- {id:"obs",ic:"📝",t:"Observaciones y Evidencias",sub:"Registro y seguimiento"},
- {id:"personal",ic:"👷",t:"Gestión de Personal",sub:"Administración e historial del personal"},
- {id:"reportes",ic:"📊",t:"Reportes",sub:"Genera y descarga reportes"},
- {id:"usuarios",ic:"⚙️",t:"Usuarios",sub:"Administración de accesos",admin:true}
+ {id:"panel",ic:"🏠",t:"Panel General",sub:"Control de asistencia y gestión de personal",grp:"Gestión operativa"},
+ {id:"prog",ic:"📅",t:"Programación Semanal",sub:"Planificación de turnos por centro de costos",grp:"Gestión operativa"},
+ {id:"asistencia",ic:"🗓️",t:"Registro de Asistencia",sub:"Control diario de ingreso, salida y estado",grp:"Gestión operativa"},
+ {id:"extras",ic:"⏱️",t:"Horas Extras",sub:"Gestión de tiempo adicional",grp:"Gestión operativa"},
+ {id:"personal",ic:"👷",t:"Gestión de Personal",sub:"Administración e historial del personal",grp:"Gestión humana"},
+ {id:"ausencias",ic:"➕",t:"Ausencias y Descansos médicos",sub:"Control preventivo de ausencias",grp:"Gestión humana"},
+ {id:"obs",ic:"📝",t:"Observaciones y Evidencias",sub:"Registro y seguimiento",grp:"Gestión humana"},
+ {id:"reportes",ic:"📊",t:"Reportes",sub:"Genera y descarga reportes",grp:"Administración"},
+ {id:"usuarios",ic:"⚙️",t:"Usuarios",sub:"Administración de accesos",grp:"Administración",admin:true}
 ];
-const BOTTOM=[{id:"panel",ic:"🏠",t:"Inicio"},{id:"asistencia",ic:"🗓️",t:"Asistencia"},{id:"ausencias",ic:"➕",t:"Ausencias"},{id:"reportes",ic:"📊",t:"Reportes"},{id:"_mas",ic:"⋯",t:"Más"}];
+const BOTTOM=[{id:"panel",ic:"🏠",t:"Inicio"},{id:"prog",ic:"📅",t:"Programación"},{id:"asistencia",ic:"🗓️",t:"Asistencia"},{id:"extras",ic:"⏱️",t:"Horas extras"},{id:"_mas",ic:"⋯",t:"Más"}];
 let view="panel";
 function buildNav(){
-  const ns=$("#navSide");ns.innerHTML="";
-  MENU.forEach(m=>{if(m.admin&&(!currentUser||currentUser.rol!=="admin"))return;const d=document.createElement("div");d.className="navit"+(m.id===view?" act":"");d.dataset.v=m.id;d.innerHTML=`<span class="ic">${m.ic}</span>${m.t}`;d.onclick=()=>go(m.id);ns.appendChild(d);});
+  const ns=$("#navSide");ns.innerHTML="";let lastG="";
+  MENU.forEach(m=>{if(m.admin&&(!currentUser||currentUser.rol!=="admin"))return;if(m.grp&&m.grp!==lastG){lastG=m.grp;const g=document.createElement("div");g.className="navgrp";g.textContent=m.grp;ns.appendChild(g);}const d=document.createElement("div");d.className="navit"+(m.id===view?" act":"");d.dataset.v=m.id;d.innerHTML=`<span class="ic">${m.ic}</span>${m.t}`;d.onclick=()=>go(m.id);ns.appendChild(d);});
   const nb=$("#navBottom");nb.innerHTML="";
   BOTTOM.forEach(m=>{const b=document.createElement("button");b.className="bn"+(m.id===view?" act":"");b.innerHTML=`<span class="ic">${m.ic}</span>${m.t}`;b.onclick=()=>{if(m.id==="_mas")masMenu();else go(m.id)};nb.appendChild(b);});
 }
@@ -392,6 +496,7 @@ function go(id){
   const el=$("#v-"+id);if(el)el.classList.add("on");
   const m=MENU.find(x=>x.id===id);if(m){$("#tbTitle").textContent=m.t;$("#tbSub").textContent=m.sub;}
   buildNav();window.scrollTo(0,0);
+  if(id==="prog"){loadSched();fillProgSede();renderProg();}
   if(id==="panel")renderPanel();
   if(id==="asistencia")renderAsist();
   if(id==="ausencias"){renderAuList();renderAuKpis();}
@@ -469,21 +574,25 @@ function renderAsist(){
         <div class="ctrls"><div><span class="lbl">Estado</span><select data-dni="${p.dni}" data-k="estado">${est}</select></div>
         <div><span class="lbl">Turno</span><select data-dni="${p.dni}" data-k="turno">${tur}</select></div>
         <div class="full times ${otro?'':'hide'}" data-times="${p.dni}"><div><span class="lbl">Entrada</span><input type="time" data-dni="${p.dni}" data-k="entrada" value="${d.entrada||''}"></div><div><span class="lbl">Salida</span><input type="time" data-dni="${p.dni}" data-k="salida" value="${d.salida||''}"></div></div></div>
-        <button class="btn-obs" data-obs="${p.dni}">Reportar observación</button>`;
+        <div style="margin-top:6px"><span class="ot" data-ot="${p.dni}" style="display:${overtimeOf(d)>0?'inline-block':'none'}">${overtimeOf(d)>0?'+'+overtimeOf(d).toFixed(1)+' h extra':''}</span></div><button class="btn-obs" data-obs="${p.dni}">Reportar observación</button>`;
       cont.appendChild(card);});
   }else{
-    let h='<table class="tb"><thead><tr><th>Trabajador</th><th>DNI</th><th>Estado</th><th>Turno</th><th>Entrada</th><th>Salida</th><th></th></tr></thead><tbody>';
+    let h='<table class="tb"><thead><tr><th>Trabajador</th><th>DNI</th><th>Estado</th><th>Turno</th><th>Entrada</th><th>Salida</th><th>Extra</th><th></th></tr></thead><tbody>';
     lista.forEach(p=>{const d=reg[p.dni]||{};const est=ESTADOS.map(e=>`<option value="${e}" ${d.estado===e?"selected":""}>${e||"—"}</option>`).join("");const tur=`<option value="">—</option>`+TURNOS.map(t=>`<option value="${t.l}" ${d.turno===t.l?"selected":""}>${t.l}</option>`).join("");
-      h+=`<tr><td><b>${p.nom}</b><br><span style="color:var(--mut);font-size:11px">${p.cargo}</span></td><td>${p.dni}</td><td><select data-dni="${p.dni}" data-k="estado">${est}</select></td><td><select data-dni="${p.dni}" data-k="turno">${tur}</select></td><td><input type="time" data-dni="${p.dni}" data-k="entrada" value="${d.entrada||''}" style="min-width:110px"></td><td><input type="time" data-dni="${p.dni}" data-k="salida" value="${d.salida||''}" style="min-width:110px"></td><td><button class="btn b-alt" data-obs="${p.dni}" style="padding:7px 10px;font-size:12px">Obs</button></td></tr>`;});
+      const bgc={"Presente":"#f3fbf6","Tardanza":"#fdfaf0","Falta":"#fdf3f3","Permiso":"#f6f4fd","Vacaciones":"#f1f8fd"}[d.estado]||"";const he=overtimeOf(d);h+=`<tr data-row="${p.dni}" style="background:${bgc}"><td><b>${p.nom}</b><br><span style="color:var(--mut);font-size:11px">${p.cargo}</span></td><td>${p.dni}</td><td><select data-dni="${p.dni}" data-k="estado">${est}</select></td><td><select data-dni="${p.dni}" data-k="turno">${tur}</select></td><td><input type="time" data-dni="${p.dni}" data-k="entrada" value="${d.entrada||''}" style="min-width:110px"></td><td><input type="time" data-dni="${p.dni}" data-k="salida" value="${d.salida||''}" style="min-width:110px"></td><td><span class="ot" data-ot="${p.dni}" style="display:${he>0?'inline-block':'none'}">${he>0?'+'+he.toFixed(1)+' h':''}</span></td><td><button class="btn b-alt" data-obs="${p.dni}" style="padding:7px 10px;font-size:12px">Obs</button></td></tr>`;});
     h+='</tbody></table>';cont.innerHTML=h;
   }
   cont.querySelectorAll("select,input").forEach(el=>el.addEventListener("change",aChange));
   cont.querySelectorAll("[data-obs]").forEach(b=>b.onclick=()=>abrirObs(b.dataset.obs));
   renderAChips();
 }
+function setInp(dni,k,val){document.querySelectorAll('input[data-dni="'+dni+'"][data-k="'+k+'"]').forEach(i=>i.value=val||"");}
+function updateOT(dni){const he=overtimeOf(reg[dni]||{});document.querySelectorAll('[data-ot="'+dni+'"]').forEach(s=>{s.textContent=he>0?("+"+he.toFixed(1)+" h"):"";s.style.display=he>0?"inline-block":"none";});}
+function rowColor(dni,est){const tr=document.querySelector('tr[data-row="'+dni+'"]');if(tr)tr.style.background={"Presente":"#f3fbf6","Tardanza":"#fdfaf0","Falta":"#fdf3f3","Permiso":"#f6f4fd","Vacaciones":"#f1f8fd"}[est]||"";}
 function aChange(e){const dni=e.target.dataset.dni,k=e.target.dataset.k,v=e.target.value;if(!dni)return;reg[dni]=reg[dni]||{};reg[dni][k]=v;
-  if(k==="turno"){const t=TURNOS.find(x=>x.l===v);const box=document.querySelector(`[data-times="${dni}"]`);if(v==="Otro (editar)"){if(box)box.classList.remove("hide")}else if(t){if(box)box.classList.add("hide");reg[dni].entrada=t.e;reg[dni].salida=t.s}else if(box)box.classList.add("hide")}
-  if(k==="estado"){const c=e.target.closest(".emp");if(c)c.className="emp s-"+v;}
+  if(k==="turno"){const t=TURNOS.find(x=>x.l===v);const box=document.querySelector(`[data-times="${dni}"]`);if(v==="Otro (editar)"){if(box)box.classList.remove("hide")}else if(t){if(box)box.classList.add("hide");reg[dni].entrada=t.e;reg[dni].salida=t.s;setInp(dni,"entrada",t.e);setInp(dni,"salida",t.s);}else if(box)box.classList.add("hide")}
+  if(k==="estado"){const c=e.target.closest(".emp");if(c)c.className="emp s-"+v;rowColor(dni,v);}
+  updateOT(dni);
   dirty=true;localStorage.setItem(claveLocal(),JSON.stringify(reg));renderAChips();}
 function renderAChips(){const{total,c,sin}=resumenDe($("#aCd").value,reg);$("#aChips").innerHTML=`<span class="chip">Total <b>${total}</b></span><span class="chip" style="color:#0a6b33">Presentes <b>${c.Presente}</b></span><span class="chip" style="color:#8a6200">Tardanzas <b>${c.Tardanza}</b></span><span class="chip" style="color:#a32d2d">Faltas <b>${c.Falta}</b></span><span class="chip" style="color:#453a9e">Permisos <b>${c.Permiso}</b></span><span class="chip" style="color:#0c6ca8">Vacaciones <b>${c.Vacaciones}</b></span><span class="chip">Sin marcar <b>${sin}</b></span>`;}
 $("#aCd").onchange=renderAsist;$("#aFecha").onchange=renderAsist;$("#aBuscar").oninput=renderAsist;
@@ -514,6 +623,7 @@ function comprobante(cd,fe,zona,sup,dm){const{total,c,sin}=resumenDe(cd,dm);tkNa
 $("#compClose").onclick=()=>$("#mComp").classList.remove("on");
 $("#mComp").addEventListener("click",e=>{if(e.target.id==="mComp")$("#mComp").classList.remove("on")});
 $("#compImg").onclick=()=>{if(!window.html2canvas)return;html2canvas($("#ticket"),{scale:2,backgroundColor:"#fff"}).then(cv=>{const a=document.createElement("a");a.href=cv.toDataURL("image/png");a.download=tkName+".png";a.click();});};
+$("#compWA").onclick=()=>{if(!window.html2canvas)return;html2canvas($("#ticket"),{scale:2,backgroundColor:"#fff"}).then(cv=>{cv.toBlob(b=>{const file=new File([b],tkName+".png",{type:"image/png"});if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],text:tkName}).catch(()=>{});}else{const a=document.createElement("a");a.href=cv.toDataURL("image/png");a.download=tkName+".png";a.click();const w=document.createElement("a");w.href="https://wa.me/";w.target="_blank";w.rel="noopener";document.body.appendChild(w);w.click();w.remove();alert("Se descargó la imagen. Se abrió WhatsApp: adjúntala en el chat (📎).");}});});};
 
 // ========== OBSERVACION (modal desde asistencia) ==========
 let obsP=null,obsFiles=[];
@@ -581,6 +691,8 @@ function renderObKpis(){const arr=Object.values(DB.observaciones).filter(a=>a);$
 
 // ========== GESTIÓN DE PERSONAL ==========
 function renderPersonal(){
+  $("#peImportCard").style.display=currentUser.rol==="admin"?"block":"none";
+  if(!window._peWired){window._peWired=1;$("#peImport").onclick=()=>{const f=$("#peFile").files[0];if(!f){alert("Elige un archivo .xlsx");return}importarExcel(f);};}
   const q=($("#peBuscar").value||"").trim().toLowerCase(),z=$("#peZona").value,es=$("#peEst").value;
   const base=PERSONAL.map(p=>{const ov=DB.personalOv[p.dni]||{};return Object.assign({estado:"Activo"},p,ov)});
   const lista=base.filter(p=>(!q||p.nom.toLowerCase().includes(q)||p.dni.includes(q))&&(!z||p.zona===z)&&(!es||p.estado===es));
@@ -631,7 +743,7 @@ function kpi(ic,color,bg,n,l,s){return `<div class="kpi"><div class="ico" style=
 // ========== EXCEL ==========
 function sheet(filas,nombre,hoja){if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(filas);ws["!autofilter"]={ref:"A1:"+String.fromCharCode(64+filas[0].length)+"1"};const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,hoja||"Datos");XLSX.writeFile(wb,nombre+".xlsx");}else{let c="";filas.forEach(r=>{c+=r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(",")+"\n"});const b=new Blob(["\ufeff"+c],{type:"text/csv"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=nombre+".csv";a.click();}}
 function excelAsistDia(cd,fe,dm){const lista=personalActivo().filter(p=>p.cd===cd);const f=[["Fecha","Centro de costo","CD","DNI","Nombre","Cargo","Estado","Turno","Entrada","Salida","Supervisor"]];lista.forEach(p=>{const d=dm[p.dni]||{};f.push([fe,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.turno||"",d.entrada||"",d.salida||"",currentUser.nombre])});sheet(f,"Asistencia_"+cd+"_"+fe,"Asistencia");}
-$("#rAsist").onclick=()=>{const f=[["Fecha","Centro de costo","CD","DNI","Nombre","Cargo","Estado","Turno","Entrada","Salida","Supervisor"]];Object.values(DB.asistencias).filter(e=>e).sort((a,b)=>(a.fecha+a.cd).localeCompare(b.fecha+b.cd)).forEach(e=>{personalActivo().filter(p=>p.cd===e.cd).forEach(p=>{const d=(e.data||{})[p.dni]||{};f.push([e.fecha,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.turno||"",d.entrada||"",d.salida||"",e.supervisor||""])})});if(f.length<2){alert("No hay asistencias guardadas.");return}sheet(f,"Historial_Asistencia","Asistencia");};
+$("#rAsist").onclick=()=>{const f=[["Fecha","Centro de costo","CD","DNI","Nombre","Cargo","Estado","Turno","Entrada","Salida","Supervisor"]];Object.values(DB.asistencias).filter(e=>e).sort((a,b)=>(a.fecha+a.cd).localeCompare(b.fecha+b.cd)).forEach(e=>{allKnownByCD(e.cd).forEach(p=>{const d=(e.data||{})[p.dni]||{};f.push([e.fecha,p.zona,p.cd,p.dni,p.nom,p.cargo,d.estado||"",d.turno||"",d.entrada||"",d.salida||"",e.supervisor||""])})});if(f.length<2){alert("No hay asistencias guardadas.");return}sheet(f,"Historial_Asistencia","Asistencia");};
 $("#rAus").onclick=()=>{const a=Object.values(DB.ausencias).filter(x=>x);if(!a.length){alert("Sin datos");return}const f=[["Trabajador","DNI","CD","Zona","Motivo","Inicio","Fin","Días","Reincorpora","Reemplazo","Obs","Reporta"]];a.forEach(x=>f.push([x.nom,x.dni,x.cd,x.zona,x.motivo,x.ini,x.fin,x.dias,x.reinc,x.reemplazo?"Sí":"No",x.obs,x.reporta]));sheet(f,"Ausencias","Ausencias");};
 $("#rExtras").onclick=()=>{const a=Object.values(DB.extras).filter(x=>x);if(!a.length){alert("Sin datos");return}const f=[["Trabajador","DNI","CD","Fecha","Prog.Ini","Prog.Fin","Real.Ini","Real.Fin","Refrig(min)","Horas extras","Actividad","Estado","Reporta"]];a.forEach(x=>f.push([x.nom,x.dni,x.cd,x.fecha,x.progIn,x.progOut,x.realIn,x.realOut,x.refrig,x.he,x.actividad,x.estado,x.reporta]));sheet(f,"Horas_Extras","HorasExtras");};
 $("#rObs").onclick=()=>{const a=Object.values(DB.observaciones).filter(x=>x);if(!a.length){alert("Sin datos");return}const f=[["Trabajador","DNI","CD","Fecha","Motivo","Detalle","Estado","Reporta"]];a.forEach(x=>f.push([x.nom,x.dni,x.cd,x.fecha,x.motivo,x.texto,x.estado,x.reporta]));sheet(f,"Observaciones","Observaciones");};
@@ -641,6 +753,99 @@ $("#rPers").onclick=()=>{const f=[["Nombre","DNI","Cargo","Zona","CD","Estado"]]
 $("#uRol").onchange=()=>{$("#uCdWrap").style.display=$("#uRol").value==="admin"?"none":"block"};
 $("#uAdd").onclick=async()=>{const n=$("#uNom").value.trim(),p=$("#uPass").value,rol=$("#uRol").value,cd=$("#uCd").value||null;if(!n||!p){alert("Usuario y contraseña obligatorios");return}const h=await sha(p);db.ref("usuarios/"+userKey(n)).set({nombre:n,passHash:h,rol,cd:rol==="admin"?null:cd});$("#uNom").value="";$("#uPass").value="";alert("Usuario guardado ✓");};
 function renderUsuarios(){const box=$("#uList");const ks=Object.keys(DB.usuarios);if(!ks.length){box.innerHTML='<div class="empty">Sin usuarios.</div>';return}box.innerHTML=ks.map(k=>{const u=DB.usuarios[k];return `<div class="listrow"><div class="x2"><b>${u.nombre}</b><div class="c">${u.rol==="admin"?"Administrador":("Líder · "+(u.cd||"sin CD"))}</div></div><div class="acts">${k==="admin"?"":`<button data-del="${k}">Eliminar</button>`}</div></div>`}).join("");box.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("¿Eliminar "+b.dataset.del+"?"))db.ref("usuarios/"+b.dataset.del).remove()});}
+
+// ========== PROGRAMACIÓN SEMANAL (independiente, 3 centros) ==========
+const PCC=["ORIENTE","CENTRO","SUR"];
+const PROG_CENTRO=[{"region": "Centro", "sede": "Ayacucho", "nom": "Fernandez Gutierrez Yuver Ildebrando", "dni": "70386493", "cargo": "Lider De Operaciones", "ingreso": "06/09/2024"}, {"region": "Centro", "sede": "Ayacucho", "nom": "Gutierrez Quispe Luis Miguel", "dni": "74594434", "cargo": "Operario", "ingreso": "28/11/2024"}, {"region": "Centro", "sede": "Ayacucho", "nom": "Loayza Suarez Jhon Hildebran", "dni": "70387647", "cargo": "Operario", "ingreso": "03/10/2025"}, {"region": "Centro", "sede": "Ayacucho", "nom": "Loayza Suarez Yeferson", "dni": "70606943", "cargo": "Operario", "ingreso": "06/03/2026"}, {"region": "Centro", "sede": "Ayacucho", "nom": "Orosco Espino Jhon Willian", "dni": "71952878", "cargo": "Operario", "ingreso": "03/09/2026"}, {"region": "Centro", "sede": "Ayacucho", "nom": "Quispe Molina Jhon Abel", "dni": "76643727", "cargo": "Operario", "ingreso": "23/11/2026"}, {"region": "Centro", "sede": "Ayacucho", "nom": "Ticlla Fernandez Jose Antonio", "dni": "73228502", "cargo": "Operario", "ingreso": "13/09/2026"}, {"region": "Centro", "sede": "Cañete", "nom": "Campos Padilla Luis Jefry", "dni": "76083403", "cargo": "Operario", "ingreso": "06/03/2024"}, {"region": "Centro", "sede": "Cañete", "nom": "De La Cruz Manrique Edwin Jose", "dni": "73828866", "cargo": "Lider De Operaciones", "ingreso": "05/12/2023"}, {"region": "Centro", "sede": "Cañete", "nom": "Padilla Vicente Roberto Ulises", "dni": "70786556", "cargo": "Operario", "ingreso": "26/11/2025"}, {"region": "Centro", "sede": "Cañete", "nom": "Vicente Villalobos Jose Antonio", "dni": "45877941", "cargo": "Operario", "ingreso": "09/11/2026"}, {"region": "Centro", "sede": "Chincha", "nom": "Avalos Saravia Luis Miguel", "dni": "76593430", "cargo": "Operario", "ingreso": "23/11/2026"}, {"region": "Centro", "sede": "Chincha", "nom": "Castilla Yataco Carlos Alberto", "dni": "70382754", "cargo": "Operario", "ingreso": "12/12/2024"}, {"region": "Centro", "sede": "Chincha", "nom": "Cubillas Cardenas Alinson Jermain", "dni": "70362324", "cargo": "Lider De Operaciones", "ingreso": "01/04/2024"}, {"region": "Centro", "sede": "Chincha", "nom": "Garay Yactato Daniel Fernando", "dni": "71941667", "cargo": "Operario", "ingreso": "15/11/2026"}, {"region": "Centro", "sede": "Chincha", "nom": "Rodriguez Meza Carlos Orlando", "dni": "62282165", "cargo": "Operario", "ingreso": "07/07/2025"}, {"region": "Centro", "sede": "Chincha", "nom": "Saravia Saravia Felix Omar", "dni": "46881380", "cargo": "Operario", "ingreso": "15/12/2025"}, {"region": "Centro", "sede": "Huancavelica", "nom": "Huaricallo Tornero Antony", "dni": "72760882", "cargo": "Asistente Logistico", "ingreso": "20/11/2026"}, {"region": "Centro", "sede": "Huancayo", "nom": "Aliano Zevallos Christian Luismi", "dni": "72750406", "cargo": "Operario", "ingreso": "18/07/2023"}, {"region": "Centro", "sede": "Huancayo", "nom": "Barrera Grados Jhonn Antony", "dni": "46340706", "cargo": "Operario", "ingreso": "04/05/2023"}, {"region": "Centro", "sede": "Huancayo", "nom": "Cardenas Del Aguila Herman", "dni": "46488896", "cargo": "Lider De Operaciones", "ingreso": "22/05/2021"}, {"region": "Centro", "sede": "Huancayo", "nom": "Chate Lazo Juan Gabriel", "dni": "72226087", "cargo": "Operario", "ingreso": "17/09/2026"}, {"region": "Centro", "sede": "Huancayo", "nom": "Damian Mendoza Antony Andres", "dni": "73210341", "cargo": "Asistente De Almacen", "ingreso": "02/02/2026"}, {"region": "Centro", "sede": "Huancayo", "nom": "Damian Mendoza Jheferson Manuel", "dni": "73210339", "cargo": "Operario", "ingreso": "28/07/2023"}, {"region": "Centro", "sede": "Huancayo", "nom": "Elvis Ronal Chancas Lima", "dni": "72079207", "cargo": "Operario", "ingreso": "23/02/2026"}, {"region": "Centro", "sede": "Huancayo", "nom": "Flores Carnica Gerardo Moises", "dni": "44525708", "cargo": "Operario", "ingreso": "10/03/2026"}, {"region": "Centro", "sede": "Huancayo", "nom": "Flores Quilca Lider Florian", "dni": "44525708", "cargo": "Operario", "ingreso": "01/11/2022"}, {"region": "Centro", "sede": "Huancayo", "nom": "Guinea Buzzio Jose Martin", "dni": "41364140", "cargo": "Operario", "ingreso": "18/07/2023"}, {"region": "Centro", "sede": "Huancayo", "nom": "Huaynalaya Saldaña Wilmer", "dni": "72104952", "cargo": "Operario", "ingreso": "14/06/2023"}, {"region": "Centro", "sede": "Huancayo", "nom": "Lazaro Lozano Jairzinho Jeampier", "dni": "71792074", "cargo": "Operario", "ingreso": "08/10/2026"}, {"region": "Centro", "sede": "Huancayo", "nom": "Quispe Cueto Jean Pieer Jhonatan", "dni": "71700428", "cargo": "Operario", "ingreso": "01/08/2022"}, {"region": "Centro", "sede": "Huancayo", "nom": "Ramirez Mendoza Steven Brad", "dni": "60813296", "cargo": "Operario", "ingreso": "02/09/2026"}, {"region": "Centro", "sede": "Huancayo", "nom": "Silverio Astete Carlos Andrés", "dni": "49060023", "cargo": "Operario", "ingreso": "08/10/2026"}, {"region": "Centro", "sede": "Ica", "nom": "Aguado Mayuri Francescoli Humberto", "dni": "70324935", "cargo": "Operario", "ingreso": "20/11/2026"}, {"region": "Centro", "sede": "Ica", "nom": "Cancho Soto Jahir Alexander", "dni": "70261688", "cargo": "Operario", "ingreso": "16/11/2026"}, {"region": "Centro", "sede": "Ica", "nom": "Clemente Nuñez Giuliano Jardel", "dni": "72858485", "cargo": "Operario", "ingreso": "06/12/2023"}, {"region": "Centro", "sede": "Ica", "nom": "Matta Mayuri Diego Martin", "dni": "60907389", "cargo": "Operario", "ingreso": "02/10/2025"}, {"region": "Centro", "sede": "Ica", "nom": "Mayuri Cersso Fredy William", "dni": "21559283", "cargo": "Lider De Operaciones", "ingreso": "01/10/2020"}, {"region": "Centro", "sede": "Ica", "nom": "Mucha Ochante Adolfo", "dni": "41185824", "cargo": "Operario", "ingreso": "31/12/2025"}, {"region": "Centro", "sede": "Ica", "nom": "Reyes Petit Luis Alejandro", "dni": "7163907", "cargo": "Operario", "ingreso": "14/05/2026"}, {"region": "Centro", "sede": "Ica", "nom": "Suarez Petit Edgar Jose", "dni": "5459272", "cargo": "Operario", "ingreso": "01/12/2023"}, {"region": "Centro", "sede": "Ica", "nom": "Zapata Rejas Luigui Javier", "dni": "73207356", "cargo": "Operario", "ingreso": "09/11/2026"}, {"region": "Centro", "sede": "Nazca", "nom": "Fabricio Alejandro De La Cruz Manrique", "dni": "61030360", "cargo": "Operario", "ingreso": "02/06/2026"}, {"region": "Centro", "sede": "Nazca", "nom": "Lopez Inciso Ivan Moises", "dni": "71765070", "cargo": "Lider De Operaciones", "ingreso": "01/04/2025"}, {"region": "Centro", "sede": "Nazca", "nom": "Obregon Cocchi Alex Joel", "dni": "75006573", "cargo": "Operario", "ingreso": "14/06/2024"}, {"region": "Centro", "sede": "Vegueta", "nom": "Amado Mejia Yerson Day", "dni": "77062393", "cargo": "Operario", "ingreso": "13/07/2026"}, {"region": "Centro", "sede": "Vegueta", "nom": "Camacho Sanchez Yack Kelvi", "dni": "76406513", "cargo": "Operario", "ingreso": "18/08/2026"}, {"region": "Centro", "sede": "Vegueta", "nom": "Garcia Palma Erik Alberto", "dni": "77380347", "cargo": "Operario", "ingreso": "12/11/2026"}, {"region": "Centro", "sede": "Vegueta", "nom": "Huanca Estrada Miguel Angel", "dni": "74289710", "cargo": "Operario", "ingreso": "12/12/2025"}, {"region": "Centro", "sede": "Vegueta", "nom": "Maiz Vasquez Angelo Brandol", "dni": "78197732", "cargo": "Operario", "ingreso": "07/09/2026"}, {"region": "Centro", "sede": "Vegueta", "nom": "Moran Manrique Sayt Gabriel", "dni": "60803805", "cargo": "Operario", "ingreso": "24/11/2026"}, {"region": "Centro", "sede": "Vegueta", "nom": "Rios Camones Daniel Teodolo", "dni": "48253658", "cargo": "Operario", "ingreso": "13/11/2026"}, {"region": "Centro", "sede": "Vegueta", "nom": "Rivera Leandro Luis", "dni": "76830812", "cargo": "Lider De Operaciones", "ingreso": "01/08/2025"}, {"region": "Centro", "sede": "Vegueta", "nom": "Tolentino Hilario Maximo", "dni": "70153800", "cargo": "Operario", "ingreso": "19/05/2026"}, {"region": "Centro", "sede": "Vegueta", "nom": "Ugarte Cruz Edgar", "dni": "48304424", "cargo": "Operario", "ingreso": "12/11/2026"}, {"region": "Centro", "sede": "Vegueta", "nom": "Valenzuela Ramirez Ronald Yonel", "dni": "73995426", "cargo": "Operario", "ingreso": "12/12/2025"}];
+const PTUR=[{k:"",l:"— Sin programar —",bg:"#eef0f3",fg:"#5b6472"},{k:"T1",l:"Turno 1",bg:"#d9ecfb",fg:"#0d4e88"},{k:"T2",l:"Turno 2",bg:"#e9e3fb",fg:"#453a9e"},{k:"T3",l:"Turno 3",bg:"#d8f3e4",fg:"#0a6b33"},{k:"DESC",l:"Descanso",bg:"#e5e7eb",fg:"#374151"},{k:"VAC",l:"Vacaciones",bg:"#fdecc8",fg:"#8a6200"},{k:"DM",l:"Descanso médico",bg:"#fde7e7",fg:"#a32d2d"},{k:"PER",l:"Permiso",bg:"#efecfb",fg:"#453a9e"},{k:"FER",l:"Feriado",bg:"#e0f2fe",fg:"#075985"}];
+const PDIAS=[["lun","Lun"],["mar","Mar"],["mie","Mié"],["jue","Jue"],["vie","Vie"],["sab","Sáb"],["dom","Dom"]];
+const PWORK=["T1","T2","T3"];
+function pturInfo(k){return PTUR.find(x=>x.k===(k||""))||PTUR[0]}
+function mondayOf(f){const x=new Date(f+"T12:00:00");const dd=(x.getDay()+6)%7;x.setDate(x.getDate()-dd);return x}
+function fmtISO(x){return x.toLocaleDateString("en-CA")}
+function isoWeek(f){const x=new Date(f+"T12:00:00");const dd=(x.getDay()+6)%7;x.setDate(x.getDate()-dd+3);const ft=new Date(x.getFullYear(),0,4);const fd=(ft.getDay()+6)%7;ft.setDate(ft.getDate()-fd+3);return 1+Math.round((x-ft)/604800000)}
+let progCC="ORIENTE",progMon=fmtISO(mondayOf(hoy())),progData={},progDirty=false;
+function progPersonal(cc){
+  const node=((DB.prog&&DB.prog.personal)||{})[cc];
+  if(node&&Object.keys(node).length)return Object.values(node);
+  if(cc==="ORIENTE"||cc==="SUR")return rosterVals().filter(p=>p.zona===cc).map(p=>({region:p.zona,sede:p.cd,nom:p.nom,dni:p.dni,cargo:p.cargo,ingreso:""}));
+  if(cc==="CENTRO")return PROG_CENTRO.slice();
+  return [];
+}
+function schedKey(){return new Date(progMon+"T12:00:00").getFullYear()+"-W"+String(isoWeek(progMon)).padStart(2,"0")}
+function loadSched(){const n=(((DB.prog&&DB.prog.sched)||{})[progCC]||{})[schedKey()];progData=n&&n.data?JSON.parse(JSON.stringify(n.data)):{};progDirty=false;}
+function progDias(){const m=new Date(progMon+"T12:00:00");return [...Array(7)].map((_,i)=>{const d=new Date(m);d.setDate(d.getDate()+i);return d;})}
+function progStats(){
+  const ppl=progPersonal(progCC);const cnt={T1:0,T2:0,T3:0,DESC:0,VAC:0,otros:0};let prog=0;
+  ppl.forEach(p=>{const row=progData[p.dni]||{};const t=PDIAS.map(d=>row[d[0]]).filter(Boolean);const work=t.filter(x=>PWORK.includes(x));
+    if(work.length){const m={};work.forEach(x=>m[x]=(m[x]||0)+1);const dom=Object.keys(m).sort((a,b)=>m[b]-m[a])[0];cnt[dom]++;prog++;}
+    else if(t.includes("VAC"))cnt.VAC++;else if(t.includes("DESC"))cnt.DESC++;else cnt.otros++;});
+  return {hc:ppl.length,cnt,prog};
+}
+function renderProgKpis(){const{hc,cnt,prog}=progStats();const req=(((DB.prog&&DB.prog.meta)||{})[progCC]||{})[schedKey()];const cob=req?Math.round(prog/req*100)+"%":"Sin meta";
+  $("#progKpis").innerHTML=kpi("👥","#1263AC","#e8f1fb",hc,"HC programado")+kpi("🟦","#0d4e88","#d9ecfb",cnt.T1,"Turno 1")+kpi("🟪","#453a9e","#e9e3fb",cnt.T2,"Turno 2")+kpi("🟩","#0a6b33","#d8f3e4",cnt.T3,"Turno 3")+kpi("🛏️","#8a6200","#fdecc8",cnt.DESC,"Descansos")+kpi("✈️","#0c6ca8","#e4f1fa",cnt.VAC,"Vacaciones")+kpi("🎯",req&&prog/req>=0.9?"#00A653":"#E8A000",req&&prog/req>=0.9?"#e7f6ec":"#fdf3df",cob,"Cobertura");}
+function renderProgLeyenda(){$("#progLeyenda").innerHTML=PTUR.filter(t=>t.k).map(t=>`<span style="background:${t.bg};color:${t.fg}">${t.l}</span>`).join("");}
+function selOf(dni,dk,val){const o=PTUR.map(t=>`<option value="${t.k}" ${t.k===val?"selected":""}>${t.k||"—"}</option>`).join("");const inf=pturInfo(val);return `<select class="tsel" data-dni="${dni}" data-d="${dk}" style="background:${inf.bg};color:${inf.fg}">${o}</select>`;}
+function sedesDe(cc){const s=new Set();progPersonal(cc).forEach(p=>{if(p.sede)s.add(p.sede)});return [...s].sort();}
+function renderProg(){
+  $("#ccTabs").innerHTML=PCC.map(c=>`<div class="cctab ${c===progCC?"act":""}" data-cc="${c}">${c}</div>`).join("");
+  $("#ccTabs").querySelectorAll("[data-cc]").forEach(b=>b.onclick=()=>{if(progDirty&&!confirm("Hay cambios sin guardar. ¿Cambiar de centro igual?"))return;progCC=b.dataset.cc;loadSched();fillProgSede();renderProg();});
+  $("#wkDate").value=progMon;
+  const ds=progDias();
+  $("#progWk").textContent="Semana "+isoWeek(progMon)+" | "+ds[0].toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit"})+" – "+ds[6].toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit",year:"numeric"});
+  renderProgKpis();renderProgLeyenda();
+  const sede=$("#progSede").value;
+  const ppl=progPersonal(progCC).filter(p=>!sede||p.sede===sede).sort((a,b)=>(a.sede+a.nom).localeCompare(b.sede+b.nom));
+  // tabla desktop
+  let h='<thead><tr><th>N°</th><th class="id">Región</th><th>Sede</th><th style="text-align:left">Nombre</th><th>DNI</th><th>Cargo</th>'+ds.map((d,i)=>`<th>${PDIAS[i][1]}<br>${d.toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit"})}</th>`).join("")+'</tr></thead><tbody>';
+  if(!ppl.length)h+='<tr><td colspan="13" style="padding:16px;color:var(--mut)">Sin personal. '+(progCC==="CENTRO"?"Importa el Excel de Centro.":"")+'</td></tr>';
+  ppl.forEach((p,i)=>{const row=progData[p.dni]||{};h+=`<tr><td>${i+1}</td><td class="id">${p.region||""}</td><td>${p.sede||""}</td><td style="text-align:left"><b>${p.nom}</b></td><td>${p.dni}</td><td>${p.cargo||""}</td>${PDIAS.map(d=>`<td>${selOf(p.dni,d[0],row[d[0]]||"")}</td>`).join("")}</tr>`;});
+  h+='</tbody>';$("#progTabla").innerHTML=h;
+  // cards movil
+  let c=ppl.length?"":'<div class="empty">Sin personal.</div>';
+  ppl.forEach(p=>{const row=progData[p.dni]||{};c+=`<div class="pcard"><div class="nm">${p.nom}</div><div class="sub">${p.cargo||""} · ${p.sede||""} · DNI ${p.dni}</div>${PDIAS.map((d,i)=>`<div class="pday"><label>${d[1]} ${ds[i].getDate()}</label>${selOf(p.dni,d[0],row[d[0]]||"")}</div>`).join("")}</div>`;});
+  $("#progCards").innerHTML=c;
+  document.querySelectorAll("#v-prog .tsel").forEach(s=>s.addEventListener("change",progChange));
+}
+function progChange(e){const dni=e.target.dataset.dni,dk=e.target.dataset.d,v=e.target.value;progData[dni]=progData[dni]||{};progData[dni][dk]=v;const inf=pturInfo(v);e.target.style.background=inf.bg;e.target.style.color=inf.fg;progDirty=true;renderProgKpis();}
+function fillProgSede(){const s=$("#progSede");const cur=s.value;s.innerHTML='<option value="">Todas las sedes</option>'+sedesDe(progCC).map(x=>`<option>${x}</option>`).join("");s.value="";}
+$("#progSede").onchange=renderProg;
+$("#wkDate").onchange=()=>{if(progDirty&&!confirm("Hay cambios sin guardar. ¿Cambiar de semana?"))return $("#wkDate").value=progMon;progMon=fmtISO(mondayOf($("#wkDate").value));loadSched();renderProg();};
+$("#wkPrev").onclick=()=>{const m=new Date(progMon+"T12:00:00");m.setDate(m.getDate()-7);progMon=fmtISO(m);loadSched();renderProg();};
+$("#wkNext").onclick=()=>{const m=new Date(progMon+"T12:00:00");m.setDate(m.getDate()+7);progMon=fmtISO(m);loadSched();renderProg();};
+$("#progSave").onclick=()=>{if(!db){alert("Sin conexión");return}const rec={data:progData,ts:Date.now(),by:currentUser.nombre,semana:isoWeek(progMon),lunes:progMon};db.ref("prog/sched/"+progCC+"/"+schedKey()).set(rec).then(()=>{progDirty=false;alert("Programación guardada ✓ ("+progCC+" · Semana "+isoWeek(progMon)+")");}).catch(e=>alert("Error: "+e.message));};
+$("#progCopy").onclick=()=>{const m=new Date(progMon+"T12:00:00");m.setDate(m.getDate()-7);const pk=new Date(m).getFullYear()+"-W"+String(isoWeek(fmtISO(m))).padStart(2,"0");const prev=(((DB.prog&&DB.prog.sched)||{})[progCC]||{})[pk];if(!prev||!prev.data){alert("No hay programación en la semana anterior.");return}if(!confirm("¿Copiar la programación de la semana anterior sobre esta? (no se guarda hasta que presiones Guardar)"))return;progData=JSON.parse(JSON.stringify(prev.data));progDirty=true;renderProg();};
+$("#progWA").onclick=()=>{const{hc,cnt,prog}=progStats();const ds=progDias();const txt=["*PROGRAMACIÓN SEMANAL*","Centro de costos: "+progCC,"Semana "+isoWeek(progMon)+" ("+ds[0].toLocaleDateString("es-PE")+" al "+ds[6].toLocaleDateString("es-PE")+")","","HC programado: "+hc,"Turno 1: "+cnt.T1,"Turno 2: "+cnt.T2,"Turno 3: "+cnt.T3,"Descansos: "+cnt.DESC,"Vacaciones: "+cnt.VAC,"Programados a trabajar: "+prog].join("\n");shareWA(txt,[]);};
+$("#progImportBtn").onclick=()=>$("#progFile").click();
+$("#progFile").onchange=e=>{const f=e.target.files[0];if(f)progImport(f);e.target.value="";};
+function progImport(file){const rd=new FileReader();rd.onload=ev=>{try{
+  const wb=XLSX.read(ev.target.result,{type:"array"});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{header:1});
+  let hr=rows.findIndex(r=>r&&r.some(c=>String(c||"").toUpperCase().includes("DNI")));if(hr<0){alert("No encontré encabezados (DNI…).");return;}
+  const head=rows[hr].map(c=>String(c||"").toUpperCase().trim());const col=k=>head.findIndex(h=>h.includes(k));
+  const rI=col("REGI"),sI=col("SEDE"),nI=head.findIndex(h=>h.includes("NOMBRE")||h.includes("APELLIDO")),dI=col("DNI"),cI=col("CARGO"),fI=col("INGRESO");
+  const per={};let n=0;
+  for(let i=hr+1;i<rows.length;i++){const r=rows[i];if(!r)continue;const nom=r[nI];if(!nom)continue;let dni=String(r[dI]||"").replace(/[^0-9]/g,"")||String(r[dI]||"").trim();if(!dni)continue;per[dni]={region:titleCase(String(r[rI]||progCC)),sede:titleCase(String(r[sI]||"")),nom:titleCase(String(nom).trim()),dni,cargo:titleCase(String(r[cI]||"")),ingreso:String(r[fI]||"")};n++;}
+  if(!n){alert("No encontré trabajadores en el archivo.");return;}
+  if(!confirm("Se cargarán "+n+" trabajadores al centro "+progCC+".\nNo afecta otros centros ni la asistencia.\n¿Continuar?"))return;
+  db.ref("prog/personal/"+progCC).set(per).then(()=>{alert("Personal de "+progCC+" actualizado: "+n+" ✓");fillProgSede();renderProg();});
+}catch(err){alert("No pude leer el Excel: "+err.message);}};rd.readAsArrayBuffer(file);}
+function comprobanteProg(){
+  const ds=progDias();const sede=$("#progSede").value;
+  const ppl=progPersonal(progCC).filter(p=>!sede||p.sede===sede).sort((a,b)=>(a.sede+a.nom).localeCompare(b.sede+b.nom));
+  const cnt={T1:0,T2:0,T3:0,DESC:0,VAC:0};let prog=0;
+  ppl.forEach(p=>{const row=progData[p.dni]||{};const t=PDIAS.map(d=>row[d[0]]).filter(Boolean);const work=t.filter(x=>PWORK.includes(x));if(work.length){const m={};work.forEach(x=>m[x]=(m[x]||0)+1);cnt[Object.keys(m).sort((a,b)=>m[b]-m[a])[0]]++;prog++;}else if(t.includes("VAC"))cnt.VAC++;else if(t.includes("DESC"))cnt.DESC++;});
+  tkName="Programacion_"+progCC+(sede?("_"+sede.replace(/\s/g,"")):"")+"_"+schedKey();
+  const dh=PDIAS.map((d,i)=>`<th style="padding:4px 2px;font-size:9px;color:#687385">${d[1]}<br>${ds[i].toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit"})}</th>`).join("");
+  const rows=ppl.length?ppl.map(p=>{const row=progData[p.dni]||{};return `<tr><td style="padding:3px 5px;font-size:10px;border-bottom:1px solid #eef2f7"><b>${p.nom}</b><div style="color:#687385;font-size:8px">${p.sede||""}</div></td>${PDIAS.map(d=>{const inf=pturInfo(row[d[0]]||"");return `<td style="padding:3px 2px;text-align:center;border-bottom:1px solid #eef2f7"><span style="display:inline-block;min-width:26px;background:${inf.bg};color:${inf.fg};font-weight:700;font-size:9px;border-radius:5px;padding:2px 0">${inf.k||"—"}</span></td>`}).join("")}</tr>`}).join(""):'<tr><td colspan="8" style="padding:12px;color:#687385;font-size:11px">Sin personal.</td></tr>';
+  $("#ticket").innerHTML=`<div class="tk-h"><svg viewBox="0 0 300 92" width="96" height="30" aria-label="Lavoro"><rect x="196" y="6" width="46" height="13" rx="6.5" fill="#EF3038"/><rect x="196" y="73" width="46" height="13" rx="6.5" fill="#00A653"/><text x="0" y="70" font-family="Nunito,Verdana,sans-serif" font-size="78" font-weight="800" fill="#1263AC" letter-spacing="-1">Lavoro</text></svg><div><h3>Programación Semanal</h3><p>${progCC}${sede?(" · "+sede):""}</p></div></div>
+    <div class="tk-meta"><b>Semana:</b> ${isoWeek(progMon)} (${ds[0].toLocaleDateString("es-PE")} al ${ds[6].toLocaleDateString("es-PE")})<br><b>Personal:</b> ${ppl.length}${currentUser?("<br><b>Reporta:</b> "+currentUser.nombre):""}</div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:12px"><thead><tr><th style="text-align:left;padding:4px 5px;font-size:9px;color:#687385">Trabajador</th>${dh}</tr></thead><tbody>${rows}</tbody></table>
+    <div class="tk-grid"><div class="tk-cell"><div class="n" style="color:#0d4e88">${cnt.T1}</div><div class="l">Turno 1</div></div><div class="tk-cell"><div class="n" style="color:#453a9e">${cnt.T2}</div><div class="l">Turno 2</div></div><div class="tk-cell"><div class="n" style="color:#0a6b33">${cnt.T3}</div><div class="l">Turno 3</div></div><div class="tk-cell"><div class="n" style="color:#8a6200">${cnt.DESC}</div><div class="l">Descanso</div></div><div class="tk-cell"><div class="n" style="color:#0c6ca8">${cnt.VAC}</div><div class="l">Vacac.</div></div><div class="tk-cell"><div class="n" style="color:#1263AC">${prog}</div><div class="l">A trabajar</div></div></div>
+    <div class="tk-foot">Generado ${new Date().toLocaleString("es-PE",{timeZone:"America/Lima"})} · Lavoro</div>`;
+  $("#mComp").classList.add("on");
+}
+$("#progComp").onclick=comprobanteProg;
+$("#progExport").onclick=()=>{const ds=progDias();const ppl=progPersonal(progCC);const f=[["N°","Semana","Región","Sede","Nombre completo","DNI","Cargo","Fecha ingreso",...PDIAS.map((d,i)=>d[1]+" "+ds[i].toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit"}))]];ppl.forEach((p,i)=>{const row=progData[p.dni]||{};f.push([i+1,isoWeek(progMon),p.region||"",p.sede||"",p.nom,p.dni,p.cargo||"",p.ingreso||"",...PDIAS.map(d=>{const inf=pturInfo(row[d[0]]||"");return inf.k?inf.l:""})])});sheet(f,"PROGRAMACION_"+progCC+"_"+schedKey(),"Programacion");};
 
 // ========== INICIO ==========
 try{const cu=JSON.parse(sessionStorage.getItem("cu")||"null");if(cu){currentUser=cu;entrarApp();}}catch(e){}
